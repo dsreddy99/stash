@@ -1,5 +1,5 @@
 hash: f51bad15a238a547dfadd9f6faea7b7c73df751b38f4c857ee4730941f231e7a
-updated: 2019-04-02T13:48:34.681507696+06:00
+updated: 2019-04-03T10:19:14.74059308+06:00
 imports:
 - name: bitbucket.org/ww/goautoneg
   version: 75cd24fc2f2c2a2088577d12123ddee5f54e0675
@@ -797,6 +797,7 @@ imports:
 - name: k8s.io/client-go
   version: e64494209f554a6723674bd494d69445fb76a1d4
   subpackages:
+  - deprecated-dynamic
   - discovery
   - discovery/fake
   - dynamic
@@ -1062,6 +1063,7 @@ imports:
   - openapi
   - rbac/v1
   - tools/analytics
+  - tools/backup
   - tools/certstore
   - tools/cli
   - tools/clientcmd
@@ -1080,7 +1082,7 @@ imports:
   - client/informers/externalversions/internalinterfaces
   - client/listers/appcatalog/v1alpha1
 - name: kmodules.xyz/objectstore-api
-  version: 1819d12be808d6e39341205515e8ec91c55d4898
+  version: d12275407591957ba398ef505f16873377e9831f
   subpackages:
   - api/v1
   - osm

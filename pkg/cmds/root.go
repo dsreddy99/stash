@@ -67,5 +67,7 @@ func NewRootCmd() *cobra.Command {
 
 	rootCmd.AddCommand(NewCmdUpdateStatus())
 
+	rootCmd.AddCommand(NewCmdBackupCluster())
+
 	return rootCmd
 }
