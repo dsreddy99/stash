@@ -221,7 +221,7 @@ func (c *StashController) EnsureCronJob(backupConfiguration *api_v1beta1.BackupC
 		}
 
 		// now ensure RBAC stuff for this CronJob
-		err := c.ensureCronJobRBAC(ref, serviceAccountName)
+		err := c.ensureCronJobRBAC(ref, serviceAccountName, c.getBackupSessionCronJobPSPNames())
 		if err != nil {
 			return err
 		}

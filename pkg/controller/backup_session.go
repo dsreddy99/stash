@@ -170,7 +170,12 @@ func (c *StashController) ensureBackupJob(backupSession *api_v1beta1.BackupSessi
 			}
 		}
 
-		err := c.ensureBackupJobRBAC(backupConfigRef, serviceAccountName)
+		psps, err := c.getBackupJobPSPNames(backupConfig)
+		if err != nil {
+			return err
+		}
+
+		err = c.ensureBackupJobRBAC(backupConfigRef, serviceAccountName, psps)
 		if err != nil {
 			return err
 		}

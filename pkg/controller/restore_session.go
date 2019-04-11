@@ -202,7 +202,12 @@ func (c *StashController) ensureRestoreJob(restoreSession *api_v1beta1.RestoreSe
 			}
 		}
 
-		err := c.ensureRestoreJobRBAC(ref, serviceAccountName)
+		psps, err := c.getRestoreJobPSPNames(restoreSession)
+		if err != nil {
+			return err
+		}
+
+		err = c.ensureRestoreJobRBAC(ref, serviceAccountName, psps)
 		if err != nil {
 			return err
 		}
