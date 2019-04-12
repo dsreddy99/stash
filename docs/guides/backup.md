@@ -26,7 +26,7 @@ At first, you need to have a Kubernetes cluster, and the `kubectl` command-line 
 
 - You should be familiar with the following Stash concepts:
 
-  - [Restic](/docs/concepts/crds/restic.md)
+  - [Restic](/docs/concepts/old-crds/restic.md)
   - [Repository](/docs/concepts/crds/repository.md)
   - [Snapshot](/docs/concepts/crds/snapshot.md)
 
@@ -529,9 +529,9 @@ If you would like to uninstall Stash operator, please follow the steps [here](/d
 
 ## Next Steps
 
-- Learn about the details of Restic CRD [here](/docs/concepts/crds/restic.md).
+- Learn about the details of Restic CRD [here](/docs/concepts/old-crds/restic.md).
 - To restore a backup see [here](/docs/guides/restore.md).
-- Learn about the details of Recovery CRD [here](/docs/concepts/crds/recovery.md).
+- Learn about the details of Recovery CRD [here](/docs/concepts/old-crds/recovery.md).
 - To run backup in offline mode see [here](/docs/guides/offline_backup.md)
 - See the list of supported backends and how to configure them [here](/docs/guides/backends/overview.md).
 - See working examples for supported workload types [here](/docs/guides/workloads.md).

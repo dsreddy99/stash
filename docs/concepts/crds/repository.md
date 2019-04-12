@@ -94,7 +94,7 @@ Stash operator updates `.status` of a Repository CRD every time a backup operati
 
 ## Creation of Repository CRD
 
-Whenever a `restic` repository is created according to [these](/docs/concepts/crds/restic.md#backup-repository-structure) rules, it also create respective `Repository` CRD object. Name of this `Repository` CRD object is generated based on rules below:
+Whenever a `restic` repository is created according to [these](/docs/concepts/old-crds/restic.md#backup-repository-structure) rules, it also create respective `Repository` CRD object. Name of this `Repository` CRD object is generated based on rules below:
 
 - For workload kind `Deployment`, `Replicaset` and `ReplicationController` `Repository` is created with name `<WORKLOAD_KIND>.<WORKLOAD_NAME>`. For multiple replicas, only one `Repository` is created as the backup is taken by sidecar of the replica determined by leader-election.
 - For workload kind `Statefulset`, `Repository` is created with name`<WORKLOAD_KIND>.<POD_NAME>`. A separate `Repository` is created for each replica of a StatefulSet.
@@ -211,7 +211,7 @@ If everything goes well, respective restic repository will be deleted from the b
 - Learn how to use Stash to backup a Kubernetes deployment [here](/docs/guides/backup.md).
 - To restore a backup see [here](/docs/guides/restore.md).
 - Learn about the details of Snapshot [here](/docs/concepts/crds/snapshot.md).
-- Learn about the details of Recovery CRD [here](/docs/concepts/crds/recovery.md).
+- Learn about the details of Recovery CRD [here](/docs/concepts/old-crds/recovery.md).
 - To run backup in offline mode see [here](/docs/guides/offline_backup.md)
 - See the list of supported backends and how to configure them [here](/docs/guides/backends/overview.md).
 - See working examples for supported workload types [here](/docs/guides/workloads.md).

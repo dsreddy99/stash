@@ -25,7 +25,7 @@ At first, you need to have a Kubernetes cluster, and the `kubectl` command-line 
 - Install `Stash` in your cluster following the steps [here](/docs/setup/install.md).
 
 - You should be familiar with the following Stash concepts:
-  - [Restic](/docs/concepts/crds/restic.md)
+  - [Restic](/docs/concepts/old-crds/restic.md)
   - [Repository](/docs/concepts/crds/repository.md)
   - [Snapshot](/docs/concepts/crds/snapshot.md)
 
@@ -426,9 +426,9 @@ If you would like to uninstall Stash operator, please follow the steps [here](/d
 ## Next Steps
 
 - Learn how to use Stash to backup a Kubernetes deployment [here](/docs/guides/backup.md).
-- Learn about the details of Restic CRD [here](/docs/concepts/crds/restic.md).
+- Learn about the details of Restic CRD [here](/docs/concepts/old-crds/restic.md).
 - To restore a backup see [here](/docs/guides/restore.md).
-- Learn about the details of Recovery CRD [here](/docs/concepts/crds/recovery.md).
+- Learn about the details of Recovery CRD [here](/docs/concepts/old-crds/recovery.md).
 - See the list of supported backends and how to configure them [here](/docs/guides/backends/overview.md).
 - See working examples for supported workload types [here](/docs/guides/workloads.md).
 - Thinking about monitoring your backup operations? Stash works [out-of-the-box with Prometheus](/docs/guides/monitoring/overview.md).
