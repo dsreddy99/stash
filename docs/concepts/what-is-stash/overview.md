@@ -39,3 +39,4 @@ section_menu_id: concepts
 | CLI                                             |   &#10003;   |                                                                                                                                                       |
 | Extensibility                                   |   &#10003;   | Extend using `Function` and `Task`                                                                                                                    |
 | Customisability                                 |   &#10003;   | Customize backup / restore process using `Function` and `Task`                                                                                        |
+| Executing `hook` before backup / restore        |   &#10003;   | Hook as `Function` and  `Task` as executor                                                                                                            |
