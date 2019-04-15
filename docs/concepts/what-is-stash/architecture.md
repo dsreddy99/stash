@@ -45,6 +45,8 @@ Aggregated API Server self-host validating and mutating [webhooks](https://kuber
 
 **Validating Webhook:** Validating Webhook is used to validate custom resources has been defined properly.
 
+**Snapshot Server:** Stash uses Kubernetes Extended API Server to provide `view`, `list` and `delete` capability of backed up snapshot. When user request for Snapshot object, Snapshot server read respective information directly from backend repository and return object representation in Kubernetes native way.
+
 #### Pushgateway
 
 `pushgateway` container runs Prometheus [pushgateway](https://github.com/prometheus/pushgateway). All the backup sidecars/jobs and restore init-containers/jobs send Prometheus metrics to this pushgateway after completing backup or restore process. Prometheus server can scrap those metrics from this pushgateway.
@@ -100,3 +102,7 @@ A complete backup or restore process may consist of several steps. For example, 
 #### AppBinding
 
 `AppBinding` holds necessary information to connect with a database. For more details about `AppBinding`, please visit [here](/docs/concepts/crds/appbinding.md).
+
+#### Snapshot
+
+A `Snapshot` is a representation of backup snapshot in a Kubernetes native way. Stash uses Kuberentes Extended API Server for handling `Snapshot`. For more details about `Snapshot` please visit [here](/docs/concepts/crds/snapshot.md).
