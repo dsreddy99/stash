@@ -7,7 +7,7 @@ spec:
   repository:
     name: local-repo
   # task: workload-backup # task field is not required for workload data backup but it is necessary for database backup.
-  schedule: "*/1 * * * *" # backup at every minutes
+  schedule: "* * * * *" # backup at every minutes
   paused: false
   target:
     ref:

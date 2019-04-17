@@ -17,13 +17,13 @@ section_menu_id: concepts
 
 ## What is BackupConfiguration
 
-A `BackupConfiguration` is a Kubernetes `CustomResourceDefinition (CRD)` which specifies the backup target, behaviours (schedule, retention policy etc.) and name of the `Repository` object that holds backend information in Kubernetes native way.
+A `BackupConfiguration` is a Kubernetes `CustomResourceDefinition (CRD)` which specifies the backup target, behaviours (schedule, retention policy etc.) and `Repository` object that holds backend information in Kubernetes native way.
 
-Users have to create a `BackupConfiguration` object for each backup target. `BackupConfiguration` object has 1-1 mapping with target. Thus, only one target can be backed up using one `BackupConfiguration`.
+Users have to create a `BackupConfiguration` object for each backup target. `BackupConfiguration` has 1-1 mapping with target. Thus, only one target can be backed up using one `BackupConfiguration`.
 
 ## BackupConfiguration CRD Specification
 
-Like other official Kubernetes resources, `BackupConfiguration` object has `TypeMeta`, `ObjectMeta` and `Spec` sections. However, unlike other Kubernetes resources, it does not have a `Status` section.
+Like other official Kubernetes resources, `BackupConfiguration` has `TypeMeta`, `ObjectMeta` and `Spec` sections. However, unlike other Kubernetes resources, it does not have a `Status` section.
 
 A sample `BackupConfiguration` object to backup a Deployment's data is shown below,
 
@@ -37,7 +37,7 @@ spec:
   repository:
     name: local-repo
   # task: workload-backup # task field is not required for workload data backup but it is necessary for database backup.
-  schedule: "*1 * * * *" # backup at every minutes
+  schedule: "* * * * *" # backup at every minutes
   paused: false
   target:
     ref:
@@ -86,7 +86,7 @@ BackupConfiguration object holds following fields in `.spec` section.
 
 #### spec.repository
 
-`spec.repository.name` indicates the `Repository` crd name that hold necessary backend information where backed up data will be stored.
+`spec.repository.name` indicates the `Repository` crd name that holds necessary backend information where backed up data will be stored.
 
 #### spec.schedule
 
@@ -94,12 +94,12 @@ BackupConfiguration object holds following fields in `.spec` section.
 
 #### spec.task
 
-`spec.task` specifies the name and parameter of `Task` template to use to backup target.
+`spec.task` specifies the name and parameters of `Task` template to use to backup the target.
 
 - **spec.task.name:** `spec.task.name` indicates the name of the `Task` template to use for this backup process.
 - **spec.task.params:** `spec.task.params` is an array of custom parameters to use to configure the task.
 
-> `spec.task` section is not necessary for backing up workload data (i.e. Deployment, DaemonSet, StatefulSet etc.). However, it is necessary to backup database and stand alone PVC.
+> `spec.task` section is not necessary for backing up workload data (i.e. Deployment, DaemonSet, StatefulSet etc.). However, it is necessary for backing up database and stand alone PVC.
 
 #### spec.paused
 
@@ -107,66 +107,80 @@ BackupConfiguration object holds following fields in `.spec` section.
 
 #### spec.target
 
-`spec.target` field indicates the target of backup. This section consist of following fields.
+`spec.target` field indicates the target of backup. This section consist of following fields:
 
-- **spec.target.ref**
-`spec.target.ref` refers to target of backup. Users have to specify `apiVersion`, `kind` and `name` of the target. Stash will use this information to inject sidecar or create backup job for respective target.
+- **spec.target.ref :** `spec.target.ref` refers to target of backup. Users have to specify `apiVersion`, `kind` and `name` of the target. Stash will use these information to inject sidecar or create backup job for the target.
 
-- **spec.target.directories**
-`spec.target.directories` specifies list of target directories of backup.
+- **spec.target.directories :** `spec.target.directories` specifies list of directories to backup.
 
-- **spec.target.volumeMounts**
-`spec.target.volumeMounts` list of volumes that contains these directories. Stash will mount these directories inside sidecar container or backup job.
+- **spec.target.volumeMounts :** `spec.target.volumeMounts` list of volumes that contains the target directories. Stash will mount these directories inside sidecar container or backup job.
 
 #### spec.runtimeSettings
 
 `spec.runtimeSettings` allows to configure runtime environment for backup sidecar or job. You can specify runtime settings in both pod level and container level.
 
-- **spec.runtimeSettings.container** 
-  `spec.runtimeSettings.container` is used to configure backup sidecar/job in container level. You can configure following container level parameters,
+- **spec.runtimeSettings.container**
   
+  `spec.runtimeSettings.container` is used to configure backup sidecar/job in container level. You can configure following container level parameters,
+
   |       Field       |                                                                                                           Usage                                                                                                            |
   | :---------------: | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
   |    `resources`    | Compute resources required by sidecar container or backup job. To know how to manage resources for containers, please visit [here](https://kubernetes.io/docs/concepts/configuration/manage-compute-resources-container/). |
   |  `livenessProbe`  | Periodic probe of backup sidecar/job container's liveness. Container will be restarted if the probe fails.                                                                                                                 |
   | `readinessProbe`  | Periodic probe of backup sidecar/job container's readiness. Container will be removed from service endpoints if the probe fails.                                                                                           |
   |    `lifecycle`    | Actions that the management system should take in response to container lifecycle events.                                                                                                                                  |
-  | `securityContext` | Security options for container it should run with. For more details, please visit [here](https://kubernetes.io/docs/concepts/policy/security-context/).                                                                    |
+  | `securityContext` | Security options that backup sidecar/job's container should run with. For more details, please visit [here](https://kubernetes.io/docs/concepts/policy/security-context/).                                                 |
   |      `nice`       | Set CPU scheduling priority for backup process. For more details about `nice`, please visit [here](https://www.askapache.com/optimize/optimize-nice-ionice/#nice).                                                         |
   |     `ionice`      | Set I/O scheduling class and priority for backup process. For more details about `ionice`, please visit [here](https://www.askapache.com/optimize/optimize-nice-ionice/#ionice).                                           |
 
 - **spec.runtimeSettings.pod**
 
   `spec.runtimeSettings.pod` is used to configure backup sidecar/job in pod level. You can configure following pod level parameters,
-  | Field  |  Usage |
-  |---|---|
-  |   |   |
 
+  |             Field              |                                                                                                                  Usage                                                                                                                   |
+  | ------------------------------ | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+  | `serviceAccountName`           | Name of the `ServiceAccount` to use for backup job. Stash sidecar will use same `ServiceAccount` as the target.                                                                                                                          |
+  | `nodeSelector`                 | Selector which must be true for backup job pod to fit on a node.                                                                                                                                                                         |
+  | `automountServiceAccountToken` | Indicates whether a service account token should be automatically mounted into backup pod.                                                                                                                                               |
+  | `nodeName`                     | NodeName is used to request to schedule backup job pod onto a specific node.                                                                                                                                                             |
+  | `securityContext`              | Security options that backup job's pod should run with. For more details, please visit [here](https://kubernetes.io/docs/tasks/configure-pod-container/security-context/).                                                               |
+  | `imagePullSecrets`             | A list of secret names in the same namespace that will be used to pull image from private docker registry. For more details, please visit [here](https://kubernetes.io/docs/tasks/configure-pod-container/pull-image-private-registry/). |
+  | `affinity`                     | Affinity and anti-affinity to schedule backup job in desired node. For more details, please visit [here](https://kubernetes.io/docs/concepts/configuration/assign-pod-node/#affinity-and-anti-affinity).                                 |
+  | `schedulerName`                | Name of the scheduler that should dispatch the backup job.                                                                                                                                                                               |
+  | `tolerations`                  | Taints and Tolerations to ensure that backup job is not scheduled in inappropriate nodes. For more details about `toleration`, please visit [here](https://kubernetes.io/docs/concepts/configuration/taint-and-toleration/).             |
+  | `priorityClassName`            | Indicates the backup job pod's priority class. For more details, please visit [here](https://kubernetes.io/docs/concepts/configuration/pod-priority-preemption/).                                                                        |
+  | `priority`                     | Indicates the backup job pod's priority value.                                                                                                                                                                                           |
+  | `readinessGates`               | Specifies additional conditions to be evaluated for Pod readiness. For more details, please visit [here](https://kubernetes.io/docs/concepts/workloads/pods/pod-lifecycle/#pod-readiness-gate).                                          |
+  | `runtimeClassName`             | RuntimeClass is used for selecting the container runtime configuration. For more details, please visit [here](https://kubernetes.io/docs/concepts/containers/runtime-class/)                                                             |
+  | `enableServiceLinks`           | EnableServiceLinks indicates whether information about services should be injected into pod's environment variables.                                                                                                                     |
 
 #### spec.tempDir
 
+Stash mount an `emtpyDir` for holding temporary files. It is also used for `caching` for faster backup performance. You can configure the `emptyDir` using `spec.tempDir` section. You can also disable `caching` using this field. Following fields are configurable in `spec.tempDir` section:
+
+- **spec.tempDir.medium :** Specifies the type of storage medium should back this directory.
+- **spec.tempDir.sizeLimit :** Maximum limit of storage for this volume.
+- **spec.tempDir.disableCaching :** Disable caching while backup. This may negatively impact backup performance.
+
 #### spec.retentionPolicy
 
-`spec.retentionPolicies` defines an array of retention policies for old snapshots. Retention policy options are below.
+`spec.retentionPolicy` specifies the policy to follow for cleaning old snapshots. Following options are available to configure retention policy:
 
-| Policy        | Value   | restic forget flag | Description                                                                                        |
-|---------------|---------|--------------------|----------------------------------------------------------------------------------------------------|
-| `name`        | string  |                    | Name of retention policy provided by users. This is used in file groups to refer to a policy.       |
-| `keepLast`    | integer | --keep-last n      | Never delete the n last (most recent) snapshots                                                    |
-| `keepHourly`  | integer | --keep-hourly n    | For the last n hours in which a snapshot was made, keep only the last snapshot for each hour.      |
-| `keepDaily`   | integer | --keep-daily n     | For the last n days which have one or more snapshots, only keep the last one for that day.         |
-| `keepWeekly`  | integer | --keep-weekly n    | For the last n weeks which have one or more snapshots, only keep the last one for that week.       |
-| `keepMonthly` | integer | --keep-monthly n   | For the last n months which have one or more snapshots, only keep the last one for that month.     |
-| `keepYearly`  | integer | --keep-yearly n    | For the last n years which have one or more snapshots, only keep the last one for that year.       |
-| `keepTags`    | array   | --keep-tag <tag>   | Keep all snapshots which have all tags specified by this option (can be specified multiple times). [`--tag foo,tag bar`](https://github.com/restic/restic/blob/master/doc/060_forget.rst) style tagging is not supported. |
-| `prune`       | bool    | --prune            | If set, actually removes the data that was referenced by the snapshot from the repository.         |
-| `dryRun`      | bool    | --dry-run          | Instructs `restic` to not remove anything but print which snapshots would be removed.              |
-
-You can set one or more of these retention policy options together. To learn more, read [here](
-https://restic.readthedocs.io/en/latest/manual.html#removing-snapshots-according-to-a-policy).
+|    Policy     |  Value  | `restic` forget command flag |                                            Description                                             |
+| ------------- | ------- | ---------------------------- | -------------------------------------------------------------------------------------------------- |
+| `name`        | string  |                              | Name of retention policy. You can provide any name.                                                |
+| `keepLast`    | integer | --keep-last n                | Never delete the **n** last (most recent) snapshots.                                               |
+| `keepHourly`  | integer | --keep-hourly n              | For the last **n** hours in which a snapshot was made, keep only the last snapshot for each hour.  |
+| `keepDaily`   | integer | --keep-daily n               | For the last **n** days which have one or more snapshots, only keep the last one for that day.     |
+| `keepWeekly`  | integer | --keep-weekly n              | For the last **n** weeks which have one or more snapshots, only keep the last one for that week.   |
+| `keepMonthly` | integer | --keep-monthly n             | For the last **n** months which have one or more snapshots, only keep the last one for that month. |
+| `keepYearly`  | integer | --keep-yearly n              | For the last **n** years which have one or more snapshots, only keep the last one for that year.   |
+| `keepTags`    | array   | --keep-tag <tag>             | Keep all snapshots which have all tags specified by this option (can be specified multiple times). |
+| `prune`       | bool    | --prune                      | If set `true`, Stash will cleanup unreferenced data from the backend.                              |
+| `dryRun`      | bool    | --dry-run                    | Stash will not remove anything but print which snapshots would be removed.                         |
 
 ## Next Steps
 
-- Learn how to create `BackupConfiguration` crd for different backends from [here](/docs/guides/backends/overview.md).
-- Learn how Stash backup workloads data from [here](/docs/guides/workloads/backup.md).
-- Learn how Stash backup databases from [here](/docs/guides/databases/backup.md).
+- Learn how to configure `BackupConfiguration` to backup workloads data from [here](/docs/guides/workloads/backup.md).
+- Learn how to configure `BackupConfiguration` to backup databases from [here](/docs/guides/databases/backup.md).
+- Learn how to configure `BackupConfiguration` to backup stand alone PVC from [here](/docs/guides/volumes/backup.md).
