@@ -23,7 +23,11 @@ When a backup schedule appears, respective `CronJob` creates a `BackupSession` o
 
 You can also create a `BackupSession` object manually to trigger backup instantly.
 
-> Note: In this tutorial, we are going to use **host** word to indicate an entity (pod) whose data is backed up.
+>In this tutorial, we are going to use **host** word to indicate an entity (pod) whose data is backed up.
+>- For `Deployment`, `ReplicationController` and `ReplicaSet`, backup process run in only one pod. This pod is referred as **host-0**.
+>- For `StatefulSet`, backup process run in all pods. In this case, **pod-0** is known as **host-0**, **pod-1** is known as **host-1**, **pod-2** is known as **host-2** and so on.
+>- For `DaemonSet`, backup process run in all daemon pods. In this case, the **node name** where the pod is running act as their **host** name.
+>- For database or stand alone PVC, backup is done by a job. In this case, backup job's pod is known as **host-0**.
 
 ## BackupSession CRD Specification
 
@@ -89,7 +93,7 @@ BackupSession object has following fields in `.spec` section:
 
 ### BackupSession `Status` Section
 
-`.status` section of `BackupSession` shows progress, stats and overall phase of backup process in this session. Backup sidecar container or job update their respective filed of this `.status` after they complete their task. `.status` section consist of following field:
+`.status` section of `BackupSession` shows progress, stats and overall phase of backup process in this session. Backup sidecar container or job update their respective filed of this `.status` after they complete their task. `.status` section consist of following fields:
 
 #### status.phase
 
@@ -97,7 +101,7 @@ BackupSession object has following fields in `.spec` section:
 
 #### status.totalHosts
 
-A `BackupSession` may trigger backup of multiple hosts. For example, all the pod's of a `Deployment`, `ReplicaSet` and `ReplicationController` mounts same volume. In this case, Stash will backup data only from one pod. Thus, total number of hosts for these workloads will be 1. On the other hand, pods of `StatefulSet` and `DaemonSet` may have different volume mounted into different replica. In this case, Stash will backup data from all individual pods. Thus, total number of hosts for these workloads will be number of replica for `StatefulSet` and number of running daemon pod for `DaemonSet`.
+A `BackupSession` may trigger backup of multiple hosts. For example, all the pod's of a `Deployment`, `ReplicaSet` and `ReplicationController` mounts same volume. In this case, Stash will backup data only from one pod. Thus, total number of hosts for these workloads will be 1. On the other hand, pods of `StatefulSet` and `DaemonSet` may have different volume mounted into different replica. In this case, Stash will backup data from all individual pods. Thus, total number of hosts for these workloads will be number of replicas for `StatefulSet` and number of running daemon pods for `DaemonSet`.
 
 #### status.sessionDuration
 
@@ -105,7 +109,7 @@ A `BackupSession` may trigger backup of multiple hosts. For example, all the pod
 
 #### status.stats
 
-`stats.status` section is an array of backup statistics of individual hosts. Each hosts adds their statistics in this array after completing their backup process.
+`status.stats` section is an array of backup statistics of individual hosts. Each hosts add their statistics in this array after completing their backup process.
 
 Individual host stats entry consist of following fields:
 

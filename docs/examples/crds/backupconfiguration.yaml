@@ -6,7 +6,8 @@ metadata:
 spec:
   repository:
     name: local-repo
-  # task: workload-backup # task field is not required for workload data backup but it is necessary for database backup.
+  # task:
+  #   name: workload-backup # task field is not required for workload data backup but it is necessary for database backup.
   schedule: "* * * * *" # backup at every minutes
   paused: false
   target:

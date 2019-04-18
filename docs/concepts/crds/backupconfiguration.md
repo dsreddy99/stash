@@ -36,7 +36,8 @@ metadata:
 spec:
   repository:
     name: local-repo
-  # task: workload-backup # task field is not required for workload data backup but it is necessary for database backup.
+  # task:
+  #   name: workload-backup # task field is not required for workload data backup but it is necessary for database backup.
   schedule: "* * * * *" # backup at every minutes
   paused: false
   target:
@@ -94,7 +95,7 @@ BackupConfiguration object holds following fields in `.spec` section.
 
 #### spec.task
 
-`spec.task` specifies the name and parameters of `Task` template to use to backup the target.
+`spec.task` specifies the name and parameters of [Task](/docs/concepts/crds/task.md) template to use to backup the target.
 
 - **spec.task.name:** `spec.task.name` indicates the name of the `Task` template to use for this backup process.
 - **spec.task.params:** `spec.task.params` is an array of custom parameters to use to configure the task.
@@ -113,7 +114,7 @@ BackupConfiguration object holds following fields in `.spec` section.
 
 - **spec.target.directories :** `spec.target.directories` specifies list of directories to backup.
 
-- **spec.target.volumeMounts :** `spec.target.volumeMounts` list of volumes that contains the target directories. Stash will mount these directories inside sidecar container or backup job.
+- **spec.target.volumeMounts :** `spec.target.volumeMounts` list of volumes and their mountPath that contains the target directories. Stash will mount these volumes inside sidecar container or backup job.
 
 #### spec.runtimeSettings
 
@@ -135,19 +136,19 @@ BackupConfiguration object holds following fields in `.spec` section.
 
 - **spec.runtimeSettings.pod**
 
-  `spec.runtimeSettings.pod` is used to configure backup sidecar/job in pod level. You can configure following pod level parameters,
+  `spec.runtimeSettings.pod` is used to configure backup job in pod level. You can configure following pod level parameters,
 
   |             Field              |                                                                                                                  Usage                                                                                                                   |
   | ------------------------------ | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
   | `serviceAccountName`           | Name of the `ServiceAccount` to use for backup job. Stash sidecar will use same `ServiceAccount` as the target.                                                                                                                          |
   | `nodeSelector`                 | Selector which must be true for backup job pod to fit on a node.                                                                                                                                                                         |
   | `automountServiceAccountToken` | Indicates whether a service account token should be automatically mounted into backup pod.                                                                                                                                               |
-  | `nodeName`                     | NodeName is used to request to schedule backup job pod onto a specific node.                                                                                                                                                             |
+  | `nodeName`                     | NodeName is used to request to schedule backup job's pod onto a specific node.                                                                                                                                                             |
   | `securityContext`              | Security options that backup job's pod should run with. For more details, please visit [here](https://kubernetes.io/docs/tasks/configure-pod-container/security-context/).                                                               |
   | `imagePullSecrets`             | A list of secret names in the same namespace that will be used to pull image from private docker registry. For more details, please visit [here](https://kubernetes.io/docs/tasks/configure-pod-container/pull-image-private-registry/). |
-  | `affinity`                     | Affinity and anti-affinity to schedule backup job in desired node. For more details, please visit [here](https://kubernetes.io/docs/concepts/configuration/assign-pod-node/#affinity-and-anti-affinity).                                 |
+  | `affinity`                     | Affinity and anti-affinity to schedule backup job's pod in desired node. For more details, please visit [here](https://kubernetes.io/docs/concepts/configuration/assign-pod-node/#affinity-and-anti-affinity).                                 |
   | `schedulerName`                | Name of the scheduler that should dispatch the backup job.                                                                                                                                                                               |
-  | `tolerations`                  | Taints and Tolerations to ensure that backup job is not scheduled in inappropriate nodes. For more details about `toleration`, please visit [here](https://kubernetes.io/docs/concepts/configuration/taint-and-toleration/).             |
+  | `tolerations`                  | Taints and Tolerations to ensure that backup job's pod is not scheduled in inappropriate nodes. For more details about `toleration`, please visit [here](https://kubernetes.io/docs/concepts/configuration/taint-and-toleration/).             |
   | `priorityClassName`            | Indicates the backup job pod's priority class. For more details, please visit [here](https://kubernetes.io/docs/concepts/configuration/pod-priority-preemption/).                                                                        |
   | `priority`                     | Indicates the backup job pod's priority value.                                                                                                                                                                                           |
   | `readinessGates`               | Specifies additional conditions to be evaluated for Pod readiness. For more details, please visit [here](https://kubernetes.io/docs/concepts/workloads/pods/pod-lifecycle/#pod-readiness-gate).                                          |

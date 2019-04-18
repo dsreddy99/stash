@@ -77,7 +77,7 @@ Stash uses [Custom Resources Definition(CRD)](https://kubernetes.io/docs/concept
 
 #### BackupConfiguration
 
-`BackupConfiguration` specifies the backup target, behaviours (schedule, retention policy etc.), `Repository` object that holds backend information etc. User have to create one `BackupConfiguration` object for each backup target. When a `BackupConfiguration` is created, Stash creates a CronJob for it and inject backup sidecar to the target if the target is a workload (i.e. Deployment, DaemonSet, StatefulSet etc.). For more details about `BackupConfiguration`, please visit [here](/docs/concepts/crds/backupconfiguration.md).
+`BackupConfiguration` specifies the backup target, behaviours (schedule, retention policy etc.), `Repository` object that holds backend information etc. User have to create one `BackupConfiguration` object for each backup target. When an user creates a `BackupConfiguration`, Stash creates a CronJob for it and inject backup sidecar to the target if the target is a workload (i.e. Deployment, DaemonSet, StatefulSet etc.). For more details about `BackupConfiguration`, please visit [here](/docs/concepts/crds/backupconfiguration.md).
 
 #### BackupSession
 
@@ -85,7 +85,7 @@ Stash uses [Custom Resources Definition(CRD)](https://kubernetes.io/docs/concept
 
 #### RestoreSession
 
-`RestoreSession` specifies where to restore and the the `Repository` that stores backed up data. User have to create a `RestoreSession` object when she want to restore. When a `RestoreSession` is created, Stash inject an `init-container` into the target workload (lunch a job if the target is not an workload) to restore. For more details about `RestoreSession`, please visit [here](/docs/concepts/crds/restoresession.md).
+`RestoreSession` specifies where to restore and the the `Repository` that stores backed up data. User have to create a `RestoreSession` object when she want to restore. When an user creates a `RestoreSession`, Stash inject an `init-container` into the target workload (lunch a job if the target is not an workload) to restore. For more details about `RestoreSession`, please visit [here](/docs/concepts/crds/restoresession.md).
 
 #### Function
 
