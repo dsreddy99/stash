@@ -1,5 +1,4 @@
 ---
----
 title: Function Overview
 menu:
   product_stash_0.8.3:
