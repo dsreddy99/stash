@@ -5,7 +5,7 @@ menu:
     identifier: snapshot-overview
     name: Snapshot
     parent: crds
-    weight: 25
+    weight: 50
 product_name: stash
 menu_name: product_stash_0.8.3
 section_menu_id: concepts
@@ -15,9 +15,11 @@ section_menu_id: concepts
 # Snapshot
 
 ## What is Snapshot
+
 A `Snapshot` is a representation of [restic](https://restic.net/) backup snapshot in a Kubernetes native way. With the help of [Aggregated API Servers](https://github.com/kubernetes/community/blob/master/contributors/design-proposals/api-machinery/aggregated-api-servers.md), **Stash** provides the users a way to `view`,`list` and `delete` snapshots from restic repositories. Now, a user can view some crucial information of snapshots like `creationTimestamp`, `snapshot id`, `backed up path`  etc. In future, this will enable the users to recover a particular snapshot using stash.
 
 ## Snapshot structure
+
 A sample `Snapshot` object's structure created by backing up a `Deployment` is shown below,
 
 ```yaml
@@ -57,6 +59,7 @@ Here, we are going to describe some important sections of `Snapshot` object.
 `uid` field in `metadata` of `Snapshot` object represents complete restic snapshot id.
 
 ### CreationTimestamp
+
 `creationTimestamp` in `metadata` field of a `Snapshot` object represents the time when the snapshot was created.
 
 ### Snapshot Labels
