@@ -17,11 +17,11 @@ section_menu_id: concepts
 
 ## What is BackupConfigurationTemplate
 
-Stash uses 1:1:1 mapping between `Repository`, `BackupConfiguration` and the target. So, whenever you want to backup a target, you have to create a `Repository` and `BackupConfiguration` object. This could be tiresome job when you are trying to backup similar types of target and `Repository` and `BackupConfiguration` has only slight difference. To mitigate this problem, Stash provides a way to specify a template for those two objects through `BackupConfigurationTemplate` crd.
+Stash uses 1:1:1 mapping between `Repository`, `BackupConfiguration` and the target. So, whenever you want to backup a target, you have to create a `Repository` and `BackupConfiguration` object. This could be tiresome job when you are trying to backup similar types of target and the `Repository` and `BackupConfiguration` has only slight difference. To mitigate this problem, Stash provides a way to specify a template for those two objects through `BackupConfigurationTemplate` crd.
 
-A `BackupConfigurationTemplate` is a Kubernetes `CustomResourceDefinition (CRD)` which specifies a template for `Repository` and `BackupConfiguration` for similar types of backup target in Kubernetes native way.
+A `BackupConfigurationTemplate` is a Kubernetes `CustomResourceDefinition (CRD)` which specifies a template for `Repository` and `BackupConfiguration` in Kubernetes native way.
 
-A user have to create only one  `BackupConfigurationTemplate` for all similar types of workload (i.e. Deployment, DaemonSet, StatefulSet etc.). Then, she just needs to add some annotations in the target workload. Stash will automatically create respective `Repository`, `BackupConfiguration` object using the template. In Stash parlance, we call this process as **default backup**.
+You have to create only one  `BackupConfigurationTemplate` for all similar types of workload (i.e. Deployment, DaemonSet, StatefulSet etc.). Then, you just need to add some annotations in the target workload. Stash will automatically create respective `Repository`, `BackupConfiguration` object using the template. In Stash parlance, we call this process as **default backup**.
 
 ## BackupConfigurationTemplate CRD Specification
 
@@ -61,7 +61,7 @@ spec:
     prune: true
 ```
 
-The sample `BackupConfigurationTemplate` that has been shown above can be used to backup Deployments, DaemonSets, StatefulSets, ReplicaSets and ReplicationControllers. You only have to add some annotations to these workloads. For more details about what annotations you have to add to the target, please visit [here](/docs/guides/default-backup/overview.md).
+The sample `BackupConfigurationTemplate` that has been shown above can be used to backup Deployments, DaemonSets, StatefulSets, ReplicaSets and ReplicationControllers. You only have to add some annotations to these workloads. For more details about what annotations you have to add to the targets, please visit [here](/docs/guides/default-backup/overview.md).
 
 Here, we are going to describe some important sections of `BackupConfigurationTemplate` crd.
 
@@ -73,7 +73,7 @@ We can divide BackupConfigurationTemplate's `.spec` section into two parts. One 
 
 You can configure `Repository` template using `spec.backend` field and `spec.wipeOut` field.
 
-- **spec.backend :** `spec.backend` section is backend specification similar to [spec.backend](/docs/concepts/crds/repository.md#specbackend) section of `Repository` crd. There is only one difference. You can now template `prefix` section (`subPath` for local volume) of the backend to store backed up data of different workloads at different directory of the backend. You can use following variables to template `spec.backend` section:
+- **spec.backend :** `spec.backend` section is backend specification similar to [spec.backend](/docs/concepts/crds/repository.md#specbackend) section of a `Repository` crd. There is only one difference. You can now template `prefix` section (`subPath` for local volume) of the backend to store backed up data of different workloads at different directory. You can use the following variables to template `spec.backend` section:
 
     |       Variable       |            Usage            |
     | -------------------- | --------------------------- |
@@ -84,17 +84,17 @@ You can configure `Repository` template using `spec.backend` field and `spec.wip
 
     If we use the sample `BackupConfigurationTemplate` that has been shown above to backup a Deployment named `my-deploy` of `test` namespace, the backed up file will be stored in `stash/test/deployment/my-deploy` directory of the `stash-backup` bucket. If we want to backup a ReplicaSet with name `my-rs` of same namespace, the backed up data will be stored in `/stash/test/replicaset/my-rs` directory of the backend.
 
-- **spec.wipeOut :** `spec.wipeOut` indicates whether Stash should delete backed up data from backend if user delete respective `Repository` created by Stash for a target. For more details, please visit [here](/docs/concepts/crds/repository.md#specwipeout).
+- **spec.wipeOut :** `spec.wipeOut` indicates whether Stash should delete backed up data from the backend if a user deletes respective `Repository` created by Stash for a target. For more details, please visit [here](/docs/concepts/crds/repository.md#specwipeout).
 
 #### BackupConfiguration Template
 
-You can set a template for the `BackupConfiguration` object that will be created for respective target using following fields:
+You can set a template for the `BackupConfiguration` object that will be created for respective target using the following fields:
 
 - **spec.schedule :** `spec.schedule` is the schedule that will be used to create `BackupConfiguration` for respective target. For more details, please visit [here](/docs/concepts/crds/backupconfiguration.md#specschedule).
 
-- **spec.task :** `spec.task` specifies the name and parameters of [Task](/docs/concepts/crds/task.md) template to use to backup the target.
+- **spec.task :** `spec.task` specifies the name and the parameters of [Task](/docs/concepts/crds/task.md) template to use to backup the target.
 
-- **spec.runtimeSettings :** `spec.runtimeSettings` allows to configure runtime environment for backup sidecar or job. For more details, please visit [here](/docs/concepts/crds/backupconfiguration.md#specruntimesettings).
+- **spec.runtimeSettings :** `spec.runtimeSettings` allows to configure runtime environment for the backup sidecar or job. For more details, please visit [here](/docs/concepts/crds/backupconfiguration.md#specruntimesettings).
 
 - **spec.tempDir :** `spec.tempDir` specifies the temporary volume setting that will be used to create respective `BackupConfiguration` object. For more details, please visit [here](/docs/concepts/crds/backupconfiguration.md#spectempdir).
 
@@ -104,4 +104,4 @@ You can set a template for the `BackupConfiguration` object that will be created
 
 - Learn how to use `BackupConfigurationTemplate` for default backup of workloads data from [here](/docs/guides/default-backup/workload.md).
 - Learn how to use `BackupConfigurationTemplate` for default-backup of database from [here](/docs/guides/default-backup/database.md).
-- Learn how to use `BackupConfigurationTemplate` for default-backup of stand alone PVC from [here](/docs/guides/default-backup/volume.md).
+- Learn how to use `BackupConfigurationTemplate` for default-backup of stand-alone PVC from [here](/docs/guides/default-backup/volume.md).

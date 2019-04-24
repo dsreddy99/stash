@@ -18,7 +18,7 @@ aliases:
 
 Concepts help you to learn about the different parts of the Stash and the abstractions it uses.
 
-This concept section is divided into following modules:
+This concept section is divided into the following modules:
 
 - What is Stash?
   - [Overview](/docs/concepts/what-is-stash/overview.md) provides an introduction to Stash. It also give an overview of the features it provides.

@@ -19,13 +19,13 @@ section_menu_id: concepts
 
 A `RestoreSession` is a Kubernetes `CustomResourceDefinition (CRD)` which specifies where to restore (target) and the source of data that will be restored in Kubernetes native way.
 
-User have to create a `RestoreSession` object when she want to restore. When an creates a `RestoreSession`, Stash inject an `init-container` into the target workload and restart it. The `init-container` restore the desired data. If the target is a database or a stand alone PVC, Stash lunch a job to perform restore process.
+You have to create a `RestoreSession` object whenever you want to restore. When a `RestoreSession` object is created, Stash injects an `init-container` into the target workload and restart it. The `init-container` restore the desired data. If the target is a database or a stand-alone PVC, Stash lunch a job to perform the restore process.
 
 >In this tutorial, we are going to use **host** word to indicate an entity (pod) where data is restored.
 >- For `Deployment`, `ReplicationController` and `ReplicaSet`, restore process run in only one pod. This pod is referred as **host-0**.
->- For `StatefulSet`, restore process run in all pods. In this case, **pod-0** is known as **host-0**, **pod-1** is known as **host-1**, **pod-2** is known as **host-2** and so on.
->- For `DaemonSet`, restore process run in all daemon pods. In this case, the **node name** where the pod is running act as their **host** name.
->- For database or stand alone PVC, restore is done by a job. In this case, restore job's pod is known as **host-0**.
+>- For `StatefulSet`, restore process runs in all pods. In this case, **pod-0** is known as **host-0**, **pod-1** is known as **host-1**, **pod-2** is known as **host-2** and so on.
+>- For `DaemonSet`, restore process runs in all daemon pods. In this case, the **node name** where the pod is running act as their **host** name.
+>- For database or stand-alone PVC, restore is done by a job. In this case, the restore job's pod is known as **host-0**.
 
 ## RestoreSession CRD Specification
 
@@ -106,45 +106,47 @@ status:
     phase: Succeeded
 ```
 
-Here, we are going to describe some important sections of `RestoreSession` CRD.
+Here, we are going to describe some important sections of `RestoreSession` crd.
 
 ### RestoreSession `Spec` Section
 
-RestoreSession object holds following fields in `.spec` section.
+RestoreSession object holds the following fields in `.spec` section.
 
 #### spec.repository
 
-`spec.repository.name` indicates the `Repository` crd name that holds necessary backend information where backed up data has been stored.
+`spec.repository.name` indicates the `Repository` crd name that holds necessary backend information where backed up data will be stored.
 
 #### spec.task
 
-`spec.task` specifies the name and parameters of `Task` template to use to restore the target data.
+`spec.task` specifies the name and parameters of the `Task` template to use to restore the target data.
 
 - **spec.task.name:** `spec.task.name` indicates the name of the [Task](/docs/concepts/crds/task.md) template to use for this restore process.
 - **spec.task.params:** `spec.task.params` is an array of custom parameters to use to configure the task.
 
-> `spec.task` section is not necessary for restoring workload data (i.e. Deployment, DaemonSet, StatefulSet etc.). However, it is necessary for restoring database and stand alone PVC.
+> `spec.task` section is not necessary for restoring workload data (i.e. Deployment, DaemonSet, StatefulSet etc.). However, it is necessary for restoring database and stand-alone PVC.
 
 #### spec.target
 
 `spec.target` field indicates the target where data will be restored. This section consist of following fields:
 
-- **spec.target.ref :** `spec.target.ref` refers to restore target. You have to specify `apiVersion`, `kind` and `name` of the target. Stash will use these information to inject `init-container` or to create restore job.
+- **spec.target.ref :** `spec.target.ref` refers to the restore target. You have to specify `apiVersion`, `kind` and `name` of the target. Stash will use this information to inject an `init-container` or to create a restore job.
 
-- **spec.target.volumeMounts :** `spec.target.volumeMounts` list of volumes and their `mountPath` where data will be restored. Stash will mount these volumes inside `init-container` or restore job.
+- **spec.target.volumeMounts :** `spec.target.volumeMounts` list of volumes and their `mountPath` where the data will be restored. Stash will mount these volumes inside the `init-container` or restore job.
 
 #### spec.rules
 
-`spec.rules` is an array of restore rule that specifies how Stash should restore in an individual host. For example, Stash run restore process in all pod's of a StatefulSet. You can configure this `spec.rules` section to control which data will be restored into which pod.
+`spec.rules` is an array of restore rule that specifies how Stash should restore in an individual host. For example, Stash runs restore process in all pod's of a StatefulSet. You can configure this `spec.rules` section to control which data will be restored into which pod.
 
-Each restore rule has following fields:
+Each restore rule has the following fields:
 
-- **subjects :** `subjects` field contains a list of host name who are subject to this rule. If `subjects` field is kept empty, it indicates that this rules is applicable to all hosts. In the sample YAML of `RestoreSession` given above, the first rule is applicable to `host-3` and `host-4` only and the second rule is applicable to all hosts.
-- **sourceHost :** `sourceHost` specifies the name of host whose backup data will be restored by this rule. In the sample `RestoreSession`, the first rule specify that backed up data of `host-0` (i.e. `pod-0` of old StatefulSet) will be restored into `host-3` and `host-4` (i.e. `pod-3` and `pod-4` of new StatefulSet). If you keep `sourceHost` field empty as shown as second rule of the sample, data from similar backup host will be restored on the respective restore host. Which means, backup data of `host-0` will be restored into `host-0`, backup data of `host-1` will be restored into `host-1` and so on.
+- **subjects :** `subjects` field contains a list of host name who are subject to this rule. If `subjects` field is kept empty, it indicates that this rule is applicable to all hosts. In the sample `RestoreSession` given above, the first rule is applicable to `host-3` and `host-4` only and the second rule is applicable to all hosts.
+- **sourceHost :** `sourceHost` specifies the name of host whose backup data will be restored by this rule. In the sample `RestoreSession`, the first rule specify that backed up data of `host-0` (i.e. `pod-0` of old StatefulSet) will be restored into `host-3` and `host-4` (i.e. `pod-3` and `pod-4` of new StatefulSet). If you keep `sourceHost` field empty as the second rule of the sample, data from a similar backup host will be restored on the respective restore host. Which means, backup data of `host-0` will be restored into `host-0`, backup data of `host-1` will be restored into `host-1` and so on.
 - **paths :** `paths` specifies a list of directories that will be restored into the hosts who are subject to this rule.
-- **snapshots :** `snapshots` specifies the list of snapshots that will be restored into the hosts who are subject to this rule. Note that, if you specify `snapshots` section, you don't have to specify `paths` section because each snapshot contains backup data of only one directory. Thus, if you specify both `paths` and `snapshots` and if a path does not present in the specified snapshot then restore process will fail.
+- **snapshots :** `snapshots` specifies the list of snapshots that will be restored into the hosts who are subject to this rule.
 
-When restore process run in a host, it starts matching rules from the beginning. When a rule match, it immediately take backup according to that rule and completes it's backup process. No further further rules are checked. So, if your rule section has multiple matching rules for a host, only the first matching rule will be applied to restore for this host.
+  >Note that, if you specify `snapshots` section, you don't have to specify `paths` section because each snapshot contains backup data of only one directory. Thus, if you specify both `paths` and `snapshots` and if a path does not exist in the specified snapshot then restore process will fail.
+
+When the restore process runs in a host, it starts matching rules from the beginning. When a rule is matched, it immediately takes backup according to that rule and completes it's backup process. No further rules are checked. So, if your rule section has multiple matching rules for a host, only the first matching rule will be applied to restore for this host.
 
 #### spec.runtimeSettings
 
@@ -152,17 +154,17 @@ When restore process run in a host, it starts matching rules from the beginning.
 
 - **spec.runtimeSettings.container**
 
-  `spec.runtimeSettings.container` is used to configure restore init-container/job in container level. You can configure following container level parameters,
+  `spec.runtimeSettings.container` is used to configure restore init-container/job in container level. You can configure the following container level parameters,
 
-  |       Field       |                                                                                                           Usage                                                                                                            |
-  | :---------------: | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+  |       Field       |                                                                                                              Usage                                                                                                               |
+  | :---------------: | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
   |    `resources`    | Compute resources required by restore init-container or restore job. To know how to manage resources for containers, please visit [here](https://kubernetes.io/docs/concepts/configuration/manage-compute-resources-container/). |
-  |  `livenessProbe`  | Periodic probe of restore init-container/job's container liveness. Container will be restarted if the probe fails.                                                                                                                 |
-  | `readinessProbe`  | Periodic probe of restore init-container/job's container readiness. Container will be removed from service endpoints if the probe fails.                                                                                           |
-  |    `lifecycle`    | Actions that the management system should take in response to container lifecycle events.                                                                                                                                  |
-  | `securityContext` | Security options that restore init-container/job's container should run with. For more details, please visit [here](https://kubernetes.io/docs/concepts/policy/security-context/).                                                 |
-  |      `nice`       | Set CPU scheduling priority for restore process. For more details about `nice`, please visit [here](https://www.askapache.com/optimize/optimize-nice-ionice/#nice).                                                         |
-  |     `ionice`      | Set I/O scheduling class and priority for restore process. For more details about `ionice`, please visit [here](https://www.askapache.com/optimize/optimize-nice-ionice/#ionice).                                           |
+  |  `livenessProbe`  | Periodic probe of restore init-container/job's container liveness. Container will be restarted if the probe fails.                                                                                                               |
+  | `readinessProbe`  | Periodic probe of restore init-container/job's container readiness. Container will be removed from service endpoints if the probe fails.                                                                                         |
+  |    `lifecycle`    | Actions that the management system should take in response to container lifecycle events.                                                                                                                                        |
+  | `securityContext` | Security options that restore init-container/job's container should run with. For more details, please visit [here](https://kubernetes.io/docs/concepts/policy/security-context/).                                               |
+  |      `nice`       | Set CPU scheduling priority for the restore process. For more details about `nice`, please visit [here](https://www.askapache.com/optimize/optimize-nice-ionice/#nice).                                                          |
+  |     `ionice`      | Set I/O scheduling class and priority for the restore process. For more details about `ionice`, please visit [here](https://www.askapache.com/optimize/optimize-nice-ionice/#ionice).                                            |
 
 - **spec.runtimeSettings.pod**
 
@@ -170,17 +172,17 @@ When restore process run in a host, it starts matching rules from the beginning.
 
   |             Field              |                                                                                                                  Usage                                                                                                                   |
   | ------------------------------ | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-  | `serviceAccountName`           | Name of the `ServiceAccount` to use for restore job. Stash init-container will use same `ServiceAccount` as the target.                                                                                                                          |
-  | `nodeSelector`                 | Selector which must be true for restore job pod to fit on a node.                                                                                                                                                                         |
-  | `automountServiceAccountToken` | Indicates whether a service account token should be automatically mounted into restore job's pod.                                                                                                                                               |
-  | `nodeName`                     | NodeName is used to request to schedule restore job's pod onto a specific node.                                                                                                                                                             |
-  | `securityContext`              | Security options that restore job's pod should run with. For more details, please visit [here](https://kubernetes.io/docs/tasks/configure-pod-container/security-context/).                                                               |
+  | `serviceAccountName`           | Name of the `ServiceAccount` to use for restore job. Stash init-container will use the same `ServiceAccount` as the target.                                                                                                              |
+  | `nodeSelector`                 | Selector which must be true for restore job pod to fit on a node.                                                                                                                                                                        |
+  | `automountServiceAccountToken` | Indicates whether a service account token should be automatically mounted into the restore job's pod.                                                                                                                                    |
+  | `nodeName`                     | NodeName is used to request to schedule restore job's pod onto a specific node.                                                                                                                                                          |
+  | `securityContext`              | Security options that restore job's pod should run with. For more details, please visit [here](https://kubernetes.io/docs/tasks/configure-pod-container/security-context/).                                                              |
   | `imagePullSecrets`             | A list of secret names in the same namespace that will be used to pull image from private docker registry. For more details, please visit [here](https://kubernetes.io/docs/tasks/configure-pod-container/pull-image-private-registry/). |
-  | `affinity`                     | Affinity and anti-affinity to schedule restore job's pod in desired node. For more details, please visit [here](https://kubernetes.io/docs/concepts/configuration/assign-pod-node/#affinity-and-anti-affinity).                                 |
-  | `schedulerName`                | Name of the scheduler that should dispatch the restore job.                                                                                                                                                                               |
-  | `tolerations`                  | Taints and Tolerations to ensure that restore job's pod is not scheduled in inappropriate nodes. For more details about `toleration`, please visit [here](https://kubernetes.io/docs/concepts/configuration/taint-and-toleration/).             |
-  | `priorityClassName`            | Indicates the restore job pod's priority class. For more details, please visit [here](https://kubernetes.io/docs/concepts/configuration/pod-priority-preemption/).                                                                        |
-  | `priority`                     | Indicates the restore job pod's priority value.                                                                                                                                                                                           |
+  | `affinity`                     | Affinity and anti-affinity to schedule restore job's pod in the desired node. For more details, please visit [here](https://kubernetes.io/docs/concepts/configuration/assign-pod-node/#affinity-and-anti-affinity).                      |
+  | `schedulerName`                | Name of the scheduler that should dispatch the restore job.                                                                                                                                                                              |
+  | `tolerations`                  | Taints and Tolerations to ensure that restore job's pod is not scheduled in inappropriate nodes. For more details about `toleration`, please visit [here](https://kubernetes.io/docs/concepts/configuration/taint-and-toleration/).      |
+  | `priorityClassName`            | Indicates the restore job pod's priority class. For more details, please visit [here](https://kubernetes.io/docs/concepts/configuration/pod-priority-preemption/).                                                                       |
+  | `priority`                     | Indicates the restore job pod's priority value.                                                                                                                                                                                          |
   | `readinessGates`               | Specifies additional conditions to be evaluated for Pod readiness. For more details, please visit [here](https://kubernetes.io/docs/concepts/workloads/pods/pod-lifecycle/#pod-readiness-gate).                                          |
   | `runtimeClassName`             | RuntimeClass is used for selecting the container runtime configuration. For more details, please visit [here](https://kubernetes.io/docs/concepts/containers/runtime-class/)                                                             |
   | `enableServiceLinks`           | EnableServiceLinks indicates whether information about services should be injected into pod's environment variables.                                                                                                                     |
@@ -191,37 +193,37 @@ Stash mount an `emtpyDir` for holding temporary files. It is also used for `cach
 
 - **spec.tempDir.medium :** Specifies the type of storage medium should back this directory.
 - **spec.tempDir.sizeLimit :** Maximum limit of storage for this volume.
-- **spec.tempDir.disableCaching :** Disable caching while restore. This may negatively impact restore performance.
+- **spec.tempDir.disableCaching :** Disable caching while restoring. This may negatively impact restore performance.
 
 ### RestoreSession `Status` Section
 
-`.status` section of `RestoreSession` shows progress, stats and overall phase of restore process. Restore init-container or job add their respective stats in `.status` section after they complete their task. `.status` section consist of following fields:
+`.status` section of `RestoreSession` shows progress, stats and overall phase of the restore process. Restore init-container or job add their respective stats in `.status` section after they complete their task. `.status` section consist of following fields:
 
 #### status.phase
 
-`status.phase` indicates the overall phase of the restore process for this RestoreSession. `status.phase` will be `Succeeded` only if phase of all hosts are `Succeeded`. If any of the hosts fail to complete restore, `status.phase` will be `Failed`.
+`status.phase` indicates the overall phase of the restore process for this RestoreSession. `status.phase` will be `Succeeded` only if the phase of all hosts are `Succeeded`. If any of the hosts fail to complete restore, `status.phase` will be `Failed`.
 
 #### status.totalHosts
 
-A `RestoreSession` may trigger restore of multiple hosts. For example, all the pod's of a `Deployment`, `ReplicaSet` and `ReplicationController` mounts same volume. In this case, Stash will restore data only in one pod. Thus, total number of hosts for these workloads will be 1. On the other hand, pods of `StatefulSet` and `DaemonSet` may have different volume mounted into different replica. In this case, Stash will restore data in all individual pods. Thus, total number of hosts for these workloads will be number of replicas for `StatefulSet` and number of running daemon pods for `DaemonSet`.
+A `RestoreSession` may trigger restore of multiple hosts. For example, all the pod's of a `Deployment`, `ReplicaSet` and `ReplicationController` mounts same volume. In this case, Stash will restore data only in one pod. Thus, the total number of hosts for these workloads will be 1. On the other hand, pods of `StatefulSet` and `DaemonSet` may have different volume mounted into different replica. In this case, Stash will restore data in all individual pods. Thus, the total number of hosts for these workloads will be number of replicas for `StatefulSet` and number of running daemon pods for `DaemonSet`.
 
 #### status.sessionDuration
 
-`status.sessionDuration` indicates total time taken to complete restore of all hosts. It is simply the sum of restore duration of all individual hosts.
+`status.sessionDuration` indicates the total time taken to complete restore of all hosts. It is simply the sum of restore duration of all individual hosts.
 
 #### status.stats
 
-`status.stats` section is an array of restore statistics of individual hosts. Each hosts add their statistics in this array after completing their restore process.
+`status.stats` section is an array of restore statistics of individual hosts. Each host adds their statistics in this array after completing their restore process.
 
 Individual host stats entry consist of following fields:
 
-- **hostname :** `hostname` indicates name of the host.
-- **phase :** `phase` indicates restore phase of this host.
-- **duration :** `duration` indicates total time taken to complete restore process for this host.
-- **error :** `error` shows the reason of failure if restore process fail for this host.
+- **hostname :** `hostname` indicates the name of the host.
+- **phase :** `phase` indicates the restore phase of this host.
+- **duration :** `duration` indicates the total time taken to complete restore process for this host.
+- **error :** `error` shows the reason for failure if the restore process fails for this host.
 
 ## Next Steps
 
 - Learn how restore of workloads data works from [here](/docs/guides/workloads/restore.md).
 - Learn how restore of databases works from [here](/docs/guides/databases/restore.md).
-- Learn how restore stand alone PVC works from [here](/docs/guides/volumes/restore.md).
+- Learn how restore stand-alone PVC works from [here](/docs/guides/volumes/restore.md).

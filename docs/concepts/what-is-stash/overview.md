@@ -14,14 +14,14 @@ section_menu_id: concepts
 
 # Stash
 
- Stash by AppsCode is a Kubernetes operator for [restic](https://restic.net). If you are running production workloads in Kubernetes, you might want to take backup of your disks,database etc. Traditional tools are too complex to setup and maintain in a dynamic compute environment like Kubernetes. `restic` is a backup program that is fast, efficient and secure with few moving parts. Stash is a CRD controller for Kubernetes built around `restic` to address these issues. Using Stash, you can backup Kubernetes volumes mounted in following types of workloads:
+ Stash by AppsCode is a Kubernetes operator for [restic](https://restic.net). If you are running production workloads in Kubernetes, you might want to take backup of your disks, database etc. Traditional tools are too complex to setup and maintain in a dynamic compute environment like Kubernetes. `restic` is a backup program that is fast, efficient and secure with few moving parts. Stash is a CRD controller for Kubernetes built around `restic` to address these issues. Using Stash, you can backup Kubernetes volumes mounted in workloads, stand-alone volumes and databases.
 
 ## Features
 
 |                    Features                     | Availability |                                                                         Scope                                                                         |
 | ----------------------------------------------- | :----------: | ----------------------------------------------------------------------------------------------------------------------------------------------------- |
 | Backup & Restore Workload Data                  |   &#10003;   | Deployment, DaemonSet, StatefulSet, ReplicaSet, ReplicationController, OpenShift DeploymentConfig                                                     |
-| Backup & Restore Standalone Volume              |   &#10003;   | PersistentVolumeClaim, PersistentVolume                                                                                                               |
+| Backup & Restore Stand-alone Volume             |   &#10003;   | PersistentVolumeClaim, PersistentVolume                                                                                                               |
 | Backup & Restore Database                       |   &#10003;   | PostgreSQL, MySQL, MongoDB                                                                                                                            |
 | Backup Cluster Resources YAML                   |   &#10007;   | Planned                                                                                                                                               |
 | Schedule Backup                                 |   &#10003;   | Schedule through [cron expression](https://en.wikipedia.org/wiki/Cron)                                                                                |
@@ -31,7 +31,7 @@ section_menu_id: concepts
 | Support Multiple Storage Provider               |   &#10003;   | AWS S3, Minio, Rook, GCS, Azure, OpenStack Swift,  Backblaze B2, Rest Server, Local Volume                                                            |
 | Encryption                                      |   &#10003;   | AES-256 in counter mode (CTR)                                                                                                                         |
 | Deduplication (send only diff)                  |   &#10003;   | Uses [Content Defined Chunking (CDC)](https://restic.net/blog/2015-09-12/restic-foundation1-cdc)                                                      |
-| Cleanup old snapshot automatically              |   &#10003;   | Cleanup according to different [retention policies](https://restic.readthedocs.io/en/stable/060_forget.html#removing-snapshots-according-to-a-policy) |
+| Cleanup old snapshots automatically             |   &#10003;   | Cleanup according to different [retention policies](https://restic.readthedocs.io/en/stable/060_forget.html#removing-snapshots-according-to-a-policy) |
 | Prometheus Metrics for Backup & Restore Process |   &#10003;   | Official Prometheus Server, CoreOS Prometheus Operator                                                                                                |
 | Prometheus Metrics for Stash Operator           |   &#10003;   | Official Prometheus Server, CoreOS Prometheus Operator                                                                                                |
 | Support RBAC enabled cluster                    |   &#10003;   |                                                                                                                                                       |
