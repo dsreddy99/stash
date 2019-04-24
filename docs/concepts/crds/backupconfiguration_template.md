@@ -74,6 +74,7 @@ We can divide BackupConfigurationTemplate's `.spec` section into two parts. One 
 You can configure `Repository` template using `spec.backend` field and `spec.wipeOut` field.
 
 - **spec.backend :** `spec.backend` section is backend specification similar to [spec.backend](/docs/concepts/crds/repository.md#specbackend) section of `Repository` crd. There is only one difference. You can now template `prefix` section (`subPath` for local volume) of the backend to store backed up data of different workloads at different directory of the backend. You can use following variables to template `spec.backend` section:
+
     |       Variable       |            Usage            |
     | -------------------- | --------------------------- |
     | `TARGET_API_VERSION` | API version of the target   |
