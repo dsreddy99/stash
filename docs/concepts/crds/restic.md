@@ -108,7 +108,7 @@ At each tick, `restic backup` and `restic forget` commands are run for each of t
 
 ## Prefix for Repository Directory
 
-Stash allow the users to provide a prefix for the backup repository directory. You can provide the prefix using  `local.subPath` for [local bckend](/docs/guides/old/backends.md#local) and `<backend-type>.prefix` for [other backends](/docs/guides/old/backends.md#aws-s3) in `spec.backend` field of `Restic` crd.
+Stash allow the users to provide a prefix for the backup repository directory. You can provide the prefix using  `local.subPath` for [local bckend](/docs/guides/old/backends/overview.md#local) and `<backend-type>.prefix` for [other backends](/docs/guides/old/backends/overview.md#aws-s3) in `spec.backend` field of `Restic` crd.
 
 If you provide the prefix then the repository will be created in the following directory,
 

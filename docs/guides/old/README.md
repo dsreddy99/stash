@@ -21,7 +21,7 @@ Guides show you how to perform tasks with Stash.
 - Learn how to use Stash to backup a Kubernetes deployment [here](/docs/guides/old/backup.md).
 - To restore a backup see [here](/docs/guides/old/restore.md).
 - To run backup in offline mode see [here](/docs/guides/old/offline_backup.md)
-- See the list of supported backends and how to configure them [here](/docs/guides/old/backends.md).
+- See the list of supported backends and how to configure them [here](/docs/guides/old/backends/overview.md).
 - Learn to use Stash in Google Kubernetes Engine [here](/docs/guides/old/platforms/gke.md)
 - Learn to use Stash with self-hosted TLS secured Minio Server [here](/docs/guides/old/platforms/minio.md).
 - Learn to use Stash in Rook Storage System [here](/docs/guides/old/platforms/rook.md)
