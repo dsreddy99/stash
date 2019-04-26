@@ -20,7 +20,7 @@ Grafana provides an elegant graphical user interface to visualize data. You can 
 
 - At first, you need to have a Kubernetes cluster, and the kubectl command-line tool must be configured to communicate with your cluster. If you do not already have a cluster, you can create one by using [Minikube](https://github.com/kubernetes/minikube).
 
-- You must have a Stash instant running with monitoring enabled. You can enable monitoring by following the guides for builtin [Prometheus](/docs/guides/monitoring/builtin.md) scrapper or [CoreOS Prometheus Operator](/docs/guides/monitoring/coreos.md). For this tutorial, we have enabled Prometheus monitoring using CoreOS Prometheus operator.
+- You must have a Stash instant running with monitoring enabled. You can enable monitoring by following the guides for builtin [Prometheus](/docs/guides/old/monitoring/builtin.md) scrapper or [CoreOS Prometheus Operator](/docs/guides/old/monitoring/coreos.md). For this tutorial, we have enabled Prometheus monitoring using CoreOS Prometheus operator.
 
 - If you already do not have a grafana instance running, deploy one following tutorial from [here](https://github.com/appscode/third-party-tools/blob/master/monitoring/grafana/README.md).
 
@@ -118,6 +118,6 @@ kubectl delete -n monitoring service prometheus
 
 ## Next Steps
 
-- Learn how monitoring in Stash works from [here](/docs/guides/monitoring/overview.md).
-- Learn how to monitor Stash using builtin Prometheus from [here](/docs/guides/monitoring/builtin.md).
-- Learn how to monitor Stash using CoreOS Prometheus Operator from [here](/docs/guides/monitoring/coreos.md).
+- Learn how monitoring in Stash works from [here](/docs/guides/old/monitoring/overview.md).
+- Learn how to monitor Stash using builtin Prometheus from [here](/docs/guides/old/monitoring/builtin.md).
+- Learn how to monitor Stash using CoreOS Prometheus Operator from [here](/docs/guides/old/monitoring/coreos.md).

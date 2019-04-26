@@ -5,7 +5,7 @@ menu:
   product_stash_0.8.3:
     identifier: backup_restore_pvc
     name: Backup and Restore PVC
-    parent: guides
+    parent: old-guides
     weight: 15
 product_name: stash
 menu_name: product_stash_0.8.3

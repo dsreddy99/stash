@@ -461,4 +461,4 @@ $ kubectl delete ns demo
 ```
 
 - To uninstall Stash from your cluster, follow the instructions from [here](/docs/setup/uninstall.md).
-- If you have deployed Minio server by following the tutorial we have linked in [Before You Begin](/docs/guides/platforms/minio.md#before-you-begin) section, please clean-up Minio resources by following the [cleanup](https://github.com/appscode/third-party-tools/blob/master/storage/minio/README.md#cleanup) section of that tutorial.
+- If you have deployed Minio server by following the tutorial we have linked in [Before You Begin](/docs/guides/old/platforms/minio.md#before-you-begin) section, please clean-up Minio resources by following the [cleanup](https://github.com/appscode/third-party-tools/blob/master/storage/minio/README.md#cleanup) section of that tutorial.

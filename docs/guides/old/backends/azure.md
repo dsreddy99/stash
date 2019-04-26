@@ -110,6 +110,6 @@ restic "azure-restic" created
 
 ## Next Steps
 
-- Learn how to use Stash in Azure Kubernetes Service (AKS) from [here](/docs/guides/platforms/aks.md).
-- Learn how to use Stash to backup a Kubernetes deployment from [here](/docs/guides/backup.md).
-- Learn how to recover from backed up snapshot from [here](/docs/guides/restore.md).
+- Learn how to use Stash in Azure Kubernetes Service (AKS) from [here](/docs/guides/old/platforms/aks.md).
+- Learn how to use Stash to backup a Kubernetes deployment from [here](/docs/guides/old/backup.md).
+- Learn how to recover from backed up snapshot from [here](/docs/guides/old/restore.md).

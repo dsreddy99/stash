@@ -141,6 +141,6 @@ $ curl -fsSL https://raw.githubusercontent.com/appscode/stash/0.8.3/hack/deploy/
 
 ## Next Steps
 
-- Learn how to monitor Stash using built-in Prometheus from [here](/docs/guides/monitoring/builtin.md).
-- Learn how to monitor Stash using CoreOS Prometheus operator from [here](/docs/guides/monitoring/coreos.md).
-- Learn how to use Grafana dashboard to visualize monitoring data from [here](/docs/guides/monitoring/grafana.md).
+- Learn how to monitor Stash using built-in Prometheus from [here](/docs/guides/old/monitoring/builtin.md).
+- Learn how to monitor Stash using CoreOS Prometheus operator from [here](/docs/guides/old/monitoring/coreos.md).
+- Learn how to use Grafana dashboard to visualize monitoring data from [here](/docs/guides/old/monitoring/grafana.md).

@@ -31,7 +31,7 @@ CoreOS [prometheus-operator](https://github.com/coreos/prometheus-operator) prov
 
 ## Enable Monitoring in Stash
 
-Enable Prometheus monitoring using `prometheus.io/coreos-operator` agent while installing Stash. To know details about how to enable monitoring see [here](/docs/guides/monitoring/overview.md#how-to-enable-monitoring).
+Enable Prometheus monitoring using `prometheus.io/coreos-operator` agent while installing Stash. To know details about how to enable monitoring see [here](/docs/guides/old/monitoring/overview.md#how-to-enable-monitoring).
 
 Here, we are going to enable monitoring for both `backup & recovery` and `operator` metrics.
 
@@ -192,6 +192,6 @@ To uninstall Stash follow this [guide](/docs/setup/uninstall.md).
 
 ## Next Steps
 
-- Learn how monitoring in Stash works from [here](/docs/guides/monitoring/overview.md).
-- Learn how to monitor Stash using builtin Prometheus from [here](/docs/guides/monitoring/builtin.md).
-- Learn how to use Grafana dashboard to visualize monitoring data from [here](/docs/guides/monitoring/grafana.md).
+- Learn how monitoring in Stash works from [here](/docs/guides/old/monitoring/overview.md).
+- Learn how to monitor Stash using builtin Prometheus from [here](/docs/guides/old/monitoring/builtin.md).
+- Learn how to use Grafana dashboard to visualize monitoring data from [here](/docs/guides/old/monitoring/grafana.md).

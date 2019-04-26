@@ -29,7 +29,7 @@ namespace/monitoring created
 
 ## Enable Monitoring in Stash
 
-Enable Prometheus monitoring using `prometheus.io/builtin` agent while installing Stash. To know details about how to enable monitoring see [here](/docs/guides/monitoring/overview.md#how-to-enable-monitoring). Here, we are going to enable monitoring for both `backup & recovery` and `operator` metrics.
+Enable Prometheus monitoring using `prometheus.io/builtin` agent while installing Stash. To know details about how to enable monitoring see [here](/docs/guides/old/monitoring/overview.md#how-to-enable-monitoring). Here, we are going to enable monitoring for both `backup & recovery` and `operator` metrics.
 
 ```console
 $ curl -fsSL https://raw.githubusercontent.com/appscode/stash/0.8.3/hack/deploy/stash.sh | bash -s -- \
@@ -346,6 +346,6 @@ To uninstall Stash follow this [guide](/docs/setup/uninstall.md).
 
 ## Next Steps
 
-- Learn how monitoring in Stash works from [here](/docs/guides/monitoring/overview.md).
-- Learn how to monitor Stash using CoreOS Prometheus operator from [here](/docs/guides/monitoring/coreos.md).
-- Learn how to use Grafana dashboard to visualize monitoring data from [here](/docs/guides/monitoring/grafana.md).
+- Learn how monitoring in Stash works from [here](/docs/guides/old/monitoring/overview.md).
+- Learn how to monitor Stash using CoreOS Prometheus operator from [here](/docs/guides/old/monitoring/coreos.md).
+- Learn how to use Grafana dashboard to visualize monitoring data from [here](/docs/guides/old/monitoring/grafana.md).

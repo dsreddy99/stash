@@ -79,12 +79,12 @@ Stash operator updates `.status` of a Recovery CRD when the recovery operation i
 
 ## Next Steps
 
-- Learn how to use Stash to backup a Kubernetes deployment [here](/docs/guides/backup.md).
+- Learn how to use Stash to backup a Kubernetes deployment [here](/docs/guides/old/backup.md).
 - Learn about the details of Restic CRD [here](/docs/concepts/crds/restic.md).
-- To restore a backup see [here](/docs/guides/restore.md).
-- To run backup in offline mode see [here](/docs/guides/offline_backup.md)
-- See the list of supported backends and how to configure them [here](/docs/guides/backends/overview.md).
-- See working examples for supported workload types [here](/docs/guides/workloads.md).
-- Thinking about monitoring your backup operations? Stash works [out-of-the-box with Prometheus](/docs/guides/monitoring/overview.md).
-- Learn about how to configure [RBAC roles](/docs/guides/rbac.md).
+- To restore a backup see [here](/docs/guides/old/restore.md).
+- To run backup in offline mode see [here](/docs/guides/old/offline_backup.md)
+- See the list of supported backends and how to configure them [here](/docs/guides/old/backends/overview.md).
+- See working examples for supported workload types [here](/docs/guides/old/workloads.md).
+- Thinking about monitoring your backup operations? Stash works [out-of-the-box with Prometheus](/docs/guides/old/monitoring/overview.md).
+- Learn about how to configure [RBAC roles](/docs/guides/old/rbac.md).
 - Want to hack on Stash? Check our [contribution guidelines](/docs/CONTRIBUTING.md).
