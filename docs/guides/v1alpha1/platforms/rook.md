@@ -16,7 +16,7 @@ section_menu_id: guides
 
 # Using Stash with Rook Storage Service
 
-This tutorial will show you how to use Stash to **backup** and **restore** a Kubernetes volume in [Rook](https://rook.io/) storage service. Here, we are going to backup the `/source/data` folder of a busybox pod into [AWS S3](/docs/guides/old/backends/overview.md#aws-s3) compatible [Rook Object Storage](https://rook.io/docs/rook/v0.9/ceph-object.html). Then, we are going to show how to recover this data into a `PersistentVolumeClaim` of [Rook Block Storage](https://rook.io/docs/rook/v0.9/ceph-block.html). We are going to also re-deploy deployment using this recovered volume.
+This tutorial will show you how to use Stash to **backup** and **restore** a Kubernetes volume in [Rook](https://rook.io/) storage service. Here, we are going to backup the `/source/data` folder of a busybox pod into [AWS S3](/docs/guides/v1alpha1/backends/overview.md#aws-s3) compatible [Rook Object Storage](https://rook.io/docs/rook/v0.9/ceph-object.html). Then, we are going to show how to recover this data into a `PersistentVolumeClaim` of [Rook Block Storage](https://rook.io/docs/rook/v0.9/ceph-block.html). We are going to also re-deploy deployment using this recovered volume.
 
 ## Before You Begin
 
