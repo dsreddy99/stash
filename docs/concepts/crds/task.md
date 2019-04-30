@@ -79,6 +79,20 @@ In the sample `Task` task specification that has been shown above, we have used 
 
 `spec.volumes` specifies a list of volumes that should be mounted in the respective job created for this `Task`. In the sample we have shown above, we need to mount storage secret to the backup job. So, we have added the secret volume in `spec.volumes` section. Note that, we have used `REPOSITORY_SECRET_NAME` variable as secret name. This variable will be resolved by Stash from `Repository` specification.
 
+## Why Function and Task?
+
+You might be wondering why we have introduced `Function` and `Task` crd. Well, let's discuss what facility this `Function-Task` model provides.
+
+We have designed `Function-Task` model for the following reasons:
+
+- **Customizability:** `Function` and `Task` enables you to customize backup/recovery process. For example, currently we use [mysqldump](https://dev.mysql.com/doc/refman/8.0/en/mysqldump.html) in `mysql-backup` Function to backup MySQL database. You can build a custom `Function` using Percona's [xtrabackup](https://www.percona.com/software/mysql-database/percona-xtrabackup) tool instead of `mysqldump`. Then you can write a `Task` with this custom `Function` and use it to backup your target MySQL database.
+
+- **Extensibility:** You can extend backup/restore process using `Function` and `Task`. You can execute hook before or after backup/restore process. For example, if you want to execute some logic to prepare your apps for backup or you want to send an email notification after each backup, you just need to add `Function` with your custom logic and respective `Task` to execute them.
+
+- **Re-usability:** `Function`'s are self-sufficient and independent of Stash. So, you can reuse them in any application that uses `Function-Task` model.
+
+- **Support Custom Database:** Currently, Stash supports backup of MySQL, MongoDB and PostgreSQL databases. You can easily backup the databases that are not officially supported by Stash. You just need to create a `Function` and a `Task` for your desired database.
+
 ## Next Steps
 
 - Learn how Stash backup databases using `Function-Task` model from [here](/docs/guides/databases/backup.md).

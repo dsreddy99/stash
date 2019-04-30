@@ -4,14 +4,14 @@ menu:
   product_stash_0.8.3:
     identifier: restic-overview
     name: Restic
-    parent: old-crds
+    parent: v1alpha1-crds
     weight: 10
 product_name: stash
 menu_name: product_stash_0.8.3
 section_menu_id: concepts
 ---
 
-> New to Stash? Please start [here](/docs/concepts/README.md).
+>**Warning:** Restic crd has been deprecated in **v1beta1 api** and will be removed in future version. Please use [BackupConfiguration](/docs/concepts/crds/backupconfiguration.md) instead.
 
 # Restics
 

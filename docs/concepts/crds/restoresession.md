@@ -22,6 +22,7 @@ A `RestoreSession` is a Kubernetes `CustomResourceDefinition (CRD)` which specif
 You have to create a `RestoreSession` object whenever you want to restore. When a `RestoreSession` object is created, Stash injects an `init-container` into the target workload and restart it. The `init-container` restore the desired data. If the target is a database or a stand-alone PVC, Stash lunch a job to perform the restore process.
 
 >In this tutorial, we are going to use **host** word to indicate an entity (pod) where data is restored.
+
 >- For `Deployment`, `ReplicationController` and `ReplicaSet`, restore process run in only one pod. This pod is referred as **host-0**.
 >- For `StatefulSet`, restore process runs in all pods. In this case, **pod-0** is known as **host-0**, **pod-1** is known as **host-1**, **pod-2** is known as **host-2** and so on.
 >- For `DaemonSet`, restore process runs in all daemon pods. In this case, the **node name** where the pod is running act as their **host** name.
@@ -148,6 +149,8 @@ Each restore rule has the following fields:
 
 When the restore process runs in a host, it starts matching rules from the beginning. When a rule is matched, it immediately takes backup according to that rule and completes it's backup process. No further rules are checked. So, if your rule section has multiple matching rules for a host, only the first matching rule will be applied to restore for this host.
 
+> If no rule match for a host, no data will be restored on that host.
+
 #### spec.runtimeSettings
 
 `spec.runtimeSettings` allows to configure runtime environment for restore `init-container` or job. You can specify runtime settings in both pod level and container level.
@@ -156,36 +159,36 @@ When the restore process runs in a host, it starts matching rules from the begin
 
   `spec.runtimeSettings.container` is used to configure restore init-container/job in container level. You can configure the following container level parameters,
 
-  |       Field       |                                                                                                              Usage                                                                                                               |
-  | :---------------: | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-  |    `resources`    | Compute resources required by restore init-container or restore job. To know how to manage resources for containers, please visit [here](https://kubernetes.io/docs/concepts/configuration/manage-compute-resources-container/). |
-  |  `livenessProbe`  | Periodic probe of restore init-container/job's container liveness. Container will be restarted if the probe fails.                                                                                                               |
-  | `readinessProbe`  | Periodic probe of restore init-container/job's container readiness. Container will be removed from service endpoints if the probe fails.                                                                                         |
-  |    `lifecycle`    | Actions that the management system should take in response to container lifecycle events.                                                                                                                                        |
-  | `securityContext` | Security options that restore init-container/job's container should run with. For more details, please visit [here](https://kubernetes.io/docs/concepts/policy/security-context/).                                               |
-  |      `nice`       | Set CPU scheduling priority for the restore process. For more details about `nice`, please visit [here](https://www.askapache.com/optimize/optimize-nice-ionice/#nice).                                                          |
-  |     `ionice`      | Set I/O scheduling class and priority for the restore process. For more details about `ionice`, please visit [here](https://www.askapache.com/optimize/optimize-nice-ionice/#ionice).                                            |
+|       Field       |                                                                                                              Usage                                                                                                               |
+| :---------------: | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+|    `resources`    | Compute resources required by restore init-container or restore job. To know how to manage resources for containers, please visit [here](https://kubernetes.io/docs/concepts/configuration/manage-compute-resources-container/). |
+|  `livenessProbe`  | Periodic probe of restore init-container/job's container liveness. Container will be restarted if the probe fails.                                                                                                               |
+| `readinessProbe`  | Periodic probe of restore init-container/job's container readiness. Container will be removed from service endpoints if the probe fails.                                                                                         |
+|    `lifecycle`    | Actions that the management system should take in response to container lifecycle events.                                                                                                                                        |
+| `securityContext` | Security options that restore init-container/job's container should run with. For more details, please visit [here](https://kubernetes.io/docs/concepts/policy/security-context/).                                               |
+|      `nice`       | Set CPU scheduling priority for the restore process. For more details about `nice`, please visit [here](https://www.askapache.com/optimize/optimize-nice-ionice/#nice).                                                          |
+|     `ionice`      | Set I/O scheduling class and priority for the restore process. For more details about `ionice`, please visit [here](https://www.askapache.com/optimize/optimize-nice-ionice/#ionice).                                            |
 
 - **spec.runtimeSettings.pod**
 
   `spec.runtimeSettings.pod` is used to configure restore job in pod level. You can configure following pod level parameters,
 
-  |             Field              |                                                                                                                  Usage                                                                                                                   |
-  | ------------------------------ | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-  | `serviceAccountName`           | Name of the `ServiceAccount` to use for restore job. Stash init-container will use the same `ServiceAccount` as the target.                                                                                                              |
-  | `nodeSelector`                 | Selector which must be true for restore job pod to fit on a node.                                                                                                                                                                        |
-  | `automountServiceAccountToken` | Indicates whether a service account token should be automatically mounted into the restore job's pod.                                                                                                                                    |
-  | `nodeName`                     | NodeName is used to request to schedule restore job's pod onto a specific node.                                                                                                                                                          |
-  | `securityContext`              | Security options that restore job's pod should run with. For more details, please visit [here](https://kubernetes.io/docs/tasks/configure-pod-container/security-context/).                                                              |
-  | `imagePullSecrets`             | A list of secret names in the same namespace that will be used to pull image from private docker registry. For more details, please visit [here](https://kubernetes.io/docs/tasks/configure-pod-container/pull-image-private-registry/). |
-  | `affinity`                     | Affinity and anti-affinity to schedule restore job's pod in the desired node. For more details, please visit [here](https://kubernetes.io/docs/concepts/configuration/assign-pod-node/#affinity-and-anti-affinity).                      |
-  | `schedulerName`                | Name of the scheduler that should dispatch the restore job.                                                                                                                                                                              |
-  | `tolerations`                  | Taints and Tolerations to ensure that restore job's pod is not scheduled in inappropriate nodes. For more details about `toleration`, please visit [here](https://kubernetes.io/docs/concepts/configuration/taint-and-toleration/).      |
-  | `priorityClassName`            | Indicates the restore job pod's priority class. For more details, please visit [here](https://kubernetes.io/docs/concepts/configuration/pod-priority-preemption/).                                                                       |
-  | `priority`                     | Indicates the restore job pod's priority value.                                                                                                                                                                                          |
-  | `readinessGates`               | Specifies additional conditions to be evaluated for Pod readiness. For more details, please visit [here](https://kubernetes.io/docs/concepts/workloads/pods/pod-lifecycle/#pod-readiness-gate).                                          |
-  | `runtimeClassName`             | RuntimeClass is used for selecting the container runtime configuration. For more details, please visit [here](https://kubernetes.io/docs/concepts/containers/runtime-class/)                                                             |
-  | `enableServiceLinks`           | EnableServiceLinks indicates whether information about services should be injected into pod's environment variables.                                                                                                                     |
+|             Field              |                                                                                                                  Usage                                                                                                                   |
+| ------------------------------ | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `serviceAccountName`           | Name of the `ServiceAccount` to use for restore job. Stash init-container will use the same `ServiceAccount` as the target.                                                                                                              |
+| `nodeSelector`                 | Selector which must be true for restore job pod to fit on a node.                                                                                                                                                                        |
+| `automountServiceAccountToken` | Indicates whether a service account token should be automatically mounted into the restore job's pod.                                                                                                                                    |
+| `nodeName`                     | NodeName is used to request to schedule restore job's pod onto a specific node.                                                                                                                                                          |
+| `securityContext`              | Security options that restore job's pod should run with. For more details, please visit [here](https://kubernetes.io/docs/tasks/configure-pod-container/security-context/).                                                              |
+| `imagePullSecrets`             | A list of secret names in the same namespace that will be used to pull image from private docker registry. For more details, please visit [here](https://kubernetes.io/docs/tasks/configure-pod-container/pull-image-private-registry/). |
+| `affinity`                     | Affinity and anti-affinity to schedule restore job's pod in the desired node. For more details, please visit [here](https://kubernetes.io/docs/concepts/configuration/assign-pod-node/#affinity-and-anti-affinity).                      |
+| `schedulerName`                | Name of the scheduler that should dispatch the restore job.                                                                                                                                                                              |
+| `tolerations`                  | Taints and Tolerations to ensure that restore job's pod is not scheduled in inappropriate nodes. For more details about `toleration`, please visit [here](https://kubernetes.io/docs/concepts/configuration/taint-and-toleration/).      |
+| `priorityClassName`            | Indicates the restore job pod's priority class. For more details, please visit [here](https://kubernetes.io/docs/concepts/configuration/pod-priority-preemption/).                                                                       |
+| `priority`                     | Indicates the restore job pod's priority value.                                                                                                                                                                                          |
+| `readinessGates`               | Specifies additional conditions to be evaluated for Pod readiness. For more details, please visit [here](https://kubernetes.io/docs/concepts/workloads/pods/pod-lifecycle/#pod-readiness-gate).                                          |
+| `runtimeClassName`             | RuntimeClass is used for selecting the container runtime configuration. For more details, please visit [here](https://kubernetes.io/docs/concepts/containers/runtime-class/)                                                             |
+| `enableServiceLinks`           | EnableServiceLinks indicates whether information about services should be injected into pod's environment variables.                                                                                                                     |
 
 #### spec.tempDir
 

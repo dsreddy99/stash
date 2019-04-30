@@ -24,6 +24,7 @@ When a backup schedule appears, the respective `CronJob` creates a `BackupSessio
 You can also create a `BackupSession` object manually to trigger backup instantly.
 
 >In this tutorial, we are going to use **host** word to indicate an entity (pod) whose data is backed up.
+
 >- For `Deployment`, `ReplicationController` and `ReplicaSet`, backup process run in only one pod. This pod is referred as **host-0**.
 >- For `StatefulSet`, backup process run in all pods. In this case, **pod-0** is known as **host-0**, **pod-1** is known as **host-1**, **pod-2** is known as **host-2** and so on.
 >- For `DaemonSet`, backup process run in all daemon pods. In this case, the **node name** where the pod is running act as their **host** name.

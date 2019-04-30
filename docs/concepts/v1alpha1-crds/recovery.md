@@ -4,14 +4,14 @@ menu:
   product_stash_0.8.3:
     identifier: recovery-overview
     name: Recovery
-    parent: old-crds
+    parent: v1alpha1-crds
     weight: 20
 product_name: stash
 menu_name: product_stash_0.8.3
 section_menu_id: concepts
 ---
 
-> New to Stash? Please start [here](/docs/concepts/README.md).
+>**Warning:** Recovery crd has been deprecated in **v1beta1 api** and will be removed in future version. Please use [RestoreSession](/docs/concepts/crds/restoresession.md) instead.
 
 # Recoveries
 
