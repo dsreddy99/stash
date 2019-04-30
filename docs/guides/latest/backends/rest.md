@@ -3,9 +3,9 @@ title: REST Backend | Stash
 description: Configure Stash to REST Server as Backend.
 menu:
   product_stash_0.8.3:
-    identifier: v1beta1-backend-rest
+    identifier: backend-rest
     name: REST Server
-    parent: v1beta1-backend
+    parent: backend
     weight: 80
 product_name: stash
 menu_name: product_stash_0.8.3
