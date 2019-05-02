@@ -30,8 +30,8 @@ Create storage secret as below,
 
 ```console
 $ echo -n 'changeit' > RESTIC_PASSWORD
-$ kubectl create secret generic local-secret --from-file=./RESTIC_PASSWORD
-secret "local-secret" created
+$ kubectl create secret generic -n demo local-secret --from-file=./RESTIC_PASSWORD
+secret/local-secret created
 ```
 
 ### Create Repository
