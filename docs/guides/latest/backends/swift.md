@@ -14,35 +14,87 @@ section_menu_id: guides
 
 # OpenStack Swift
 
-Stash supports [OpenStack Swift as backend](https://restic.readthedocs.io/en/stable/030_preparing_a_new_repo.html#openstack-swift). This tutorial will show you how to configure **Restic** and storage **Secret** for Swift backend.
+Stash supports [OpenStack Swift](https://www.swiftstack.com/product/open-source/openstack-swift) as backend. This tutorial will show you how to use this backend.
+
+In order to use OpenStack Swift as backend, you have to create a `Secret` and a `Repository` object pointing to the desired Swift container.
 
 #### Create Storage Secret
 
-To configure storage secret this backend, following secret keys are needed:
+Stash supports Swift's Keystone v1, v2, v3 authentication as well as token based authentication.
+
+**Keystone v1 authentication:**
+
+For keystone v1 authentication, following secret keys are needed:
 
 | Key                      | Description                                                |
 |--------------------------|------------------------------------------------------------|
-| `RESTIC_PASSWORD`        | `Required`. Password used to encrypt snapshots by `restic` |
-| `ST_AUTH`                | For keystone v1 authentication                             |
-| `ST_USER`                | For keystone v1 authentication                             |
-| `ST_KEY`                 | For keystone v1 authentication                             |
-| `OS_AUTH_URL`            | For keystone v2 authentication                             |
-| `OS_REGION_NAME`         | For keystone v2 authentication                             |
-| `OS_USERNAME`            | For keystone v2 authentication                             |
-| `OS_PASSWORD`            | For keystone v2 authentication                             |
-| `OS_TENANT_ID`           | For keystone v2 authentication                             |
-| `OS_TENANT_NAME`         | For keystone v2 authentication                             |
-| `OS_AUTH_URL`            | For keystone v3 authentication                             |
-| `OS_REGION_NAME`         | For keystone v3 authentication                             |
-| `OS_USERNAME`            | For keystone v3 authentication                             |
-| `OS_PASSWORD`            | For keystone v3 authentication                             |
-| `OS_USER_DOMAIN_NAME`    | For keystone v3 authentication                             |
-| `OS_PROJECT_NAME`        | For keystone v3 authentication                             |
-| `OS_PROJECT_DOMAIN_NAME` | For keystone v3 authentication                             |
-| `OS_STORAGE_URL`         | For authentication based on tokens                         |
-| `OS_AUTH_TOKEN`          | For authentication based on tokens                         |
+| `RESTIC_PASSWORD`        | Password used that will be used to encrypt the backup snapshots.|
+| `ST_AUTH`                | URL of the Keystone server.                             |
+| `ST_USER`                | Username.                             |
+| `ST_KEY`                 | Password.                             |
 
-Create storage secret as below,
+**Keystone v2 authentication:**
+
+For keystone v2 authentication, following secret keys are needed:
+
+| Key                      | Description                                                |
+|--------------------------|------------------------------------------------------------|
+| `RESTIC_PASSWORD`        | Password used that will be used to encrypt the backup snapshots.|
+| `OS_AUTH_URL`            | URL of the Keystone server.                             |
+| `OS_REGION_NAME`         | Storage region name                              |
+| `OS_USERNAME`            | Username                             |
+| `OS_PASSWORD`            | Password                             |
+| `OS_TENANT_ID`           | Tenant ID                             |
+| `OS_TENANT_NAME`         | Tenant Name                             |
+
+**Keystone v3 authentication:**
+
+For keystone v3 authentication, following secret keys are needed:
+
+| Key                      | Description                                                |
+|--------------------------|------------------------------------------------------------|
+| `RESTIC_PASSWORD`        | Password used that will be used to encrypt the backup snapshots.|
+| `OS_AUTH_URL`            | URL of the Keystone server.                             |
+| `OS_REGION_NAME`         | Storage region name                             |
+| `OS_USERNAME`            | Username                             |
+| `OS_PASSWORD`            | Password                             |
+| `OS_USER_DOMAIN_NAME`    | User domain name                             |
+| `OS_PROJECT_NAME`        | Project name                             |
+| `OS_PROJECT_DOMAIN_NAME` | Project domain name                             |
+
+For keystone v3 application credential authentication (application credential id):
+
+| Key                      | Description                                                |
+|--------------------------|------------------------------------------------------------|
+| `RESTIC_PASSWORD`        | Password used that will be used to encrypt the backup snapshots.|
+| `OS_AUTH_URL`            | URL of the Keystone server.                             |
+| `OS_APPLICATION_CREDENTIAL_ID` | The ID of the application credential used for authentication. If not provided, the application credential must be identified by its name and its owning user.|
+| `OS_APPLICATION_CREDENTIAL_SECRET` | The secret for authenticating the application credential.
+|
+
+For keystone v3 application credential authentication (application credential name):
+| Key                      | Description                                                |
+|--------------------------|------------------------------------------------------------|
+| `RESTIC_PASSWORD`        | Password used that will be used to encrypt the backup snapshots.|
+| `OS_AUTH_URL`            | URL of the Keystone server.                             |
+| `OS_USERNAME` | User name|
+| `OS_USER_DOMAIN_NAME` | User domain name|
+| `OS_APPLICATION_CREDENTIAL_NAME` | The name of the application credential used for authentication. If provided, must be accompanied by a user object.
+|
+| `OS_APPLICATION_CREDENTIAL_SECRET` | The secret for authenticating the application credential.
+|
+
+**Token based authentication:**
+
+For token based authentication, following secret keys are needed:
+
+| Key                      | Description                                                |
+|--------------------------|------------------------------------------------------------|
+| `RESTIC_PASSWORD`        | Password used that will be used to encrypt the backup snapshots.|
+| `OS_STORAGE_URL`         | Storage URL                         |
+| `OS_AUTH_TOKEN`          | Authentication token                         |
+
+A sample storage secret creation for keystone v2 authentication is shown below,
 
 ```console
 $ echo -n 'changeit' > RESTIC_PASSWORD
@@ -60,37 +112,12 @@ $ kubectl create secret generic swift-secret \
     --from-file=./OS_USERNAME \
     --from-file=./OS_PASSWORD \
     --from-file=./OS_REGION_NAME
-secret "swift-secret" created
+secret/swift-secret created
 ```
 
-Verify that the secret has been created with respective keys,
+### Create Repository
 
-```yaml
-$ kubectl get secret swift-secret -o yaml
-
-apiVersion: v1
-data:
-  OS_AUTH_URL: PHlvdXItYXV0aC11cmw+
-  OS_PASSWORD: PHlvdXItcGFzc3dvcmQ+
-  OS_REGION_NAME: PHlvdXItcmVnaW9uPg==
-  OS_TENANT_ID: PHlvdXItdGVuYW50LWlkPg==
-  OS_TENANT_NAME: PHlvdXItdGVuYW50LW5hbWU+
-  OS_USERNAME: PHlvdXItdXNlcm5hbWU+
-  RESTIC_PASSWORD: Y2hhbmdlaXQ=
-kind: Secret
-metadata:
-  creationTimestamp: 2017-07-03T19:17:39Z
-  name: swift-secret
-  namespace: default
-  resourceVersion: "36381"
-  selfLink: /api/v1/namespaces/default/secrets/swift-secret
-  uid: 47b4bcab-6024-11e7-879a-080027726d6b
-type: Opaque
-```
-
-#### Configure Restic
-
-Now, you have to configure Restic crd to use OpenStack swift backend. You have to provide previously created storage secret in `spec.backend.storageSecretName` field.
+Now, you have to create a `Repository` crd. You have to provide the storage secret that we have created earlier in `spec.backend.storageSecretName` field.
 
 Following parameters are available for `Swift` backend.
 
@@ -99,44 +126,33 @@ Following parameters are available for `Swift` backend.
 | `swift.container` | `Required`. Name of Storage container                                       |
 | `swift.prefix`    | `Optional`. Path prefix into bucket where repository will be created.       |
 
-Below, the YAML for Restic crd configured to use Swift backend.
+Below, the YAML of a sample `Repository` crd that uses a GCS bucket as backend.
 
 ```yaml
 apiVersion: stash.appscode.com/v1alpha1
-kind: Restic
+kind: Repository
 metadata:
-  name: swift-restic
-  namespace: default
+  name: swift-repo
+  namespace: demo
 spec:
-  selector:
-    matchLabels:
-      app: swift-restic
-  fileGroups:
-  - path: /source/data
-    retentionPolicyName: 'keep-last-5'
   backend:
     swift:
-      container: stashqa
-      prefix: demo
+      container: stash-backup
+      prefix: /demo/deployment/my-deploy
     storageSecretName: swift-secret
-  schedule: '@every 1m'
-  volumeMounts:
-  - mountPath: /source/data
-    name: source-data
-  retentionPolicies:
-  - name: 'keep-last-5'
-    keepLast: 5
-    prune: true
 ```
 
-Now, create the Restic we have configured above for `swift` backend,
+Create the `Repository` we have shown above using the following command,
 
 ```console
-$ kubectl apply -f ./docs/examples/backends/swift/swift-restic.yaml
-restic "swift-restic" created
+$ kubectl apply -f https://raw.githubusercontent.com/appscode/stash/0.8.3/docs/examples/guides/v1beta1/backends/gcs.yaml
+repository/gcs-repo created
 ```
+
+Now, we are ready to use this backend to backup our desired data using Stash.
 
 ## Next Steps
 
-- Learn how to use Stash to backup a Kubernetes deployment from [here](/docs/guides/old/backup.md).
-- Learn how to recover from backed up snapshot from [here](/docs/guides/old/restore.md).
+- Learn how to use Stash to backup workloads data from [here](/docs/guides/latest/workloads/backup.md).
+- Learn how to use Stash to backup databases from [here](/docs/guides/latest/databases/backup.md).
+- Learn how to use Stash to backup stand-alone PVC from [here](/docs/guides/latest/volumes/backup.md).
