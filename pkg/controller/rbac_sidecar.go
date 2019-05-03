@@ -25,28 +25,32 @@ func (c *StashController) ensureSidecarRoleBinding(resource *core.ObjectReferenc
 		Namespace: resource.Namespace,
 		Name:      c.getSidecarRoleBindingName(resource.Name),
 	}
-	_, _, err := rbac_util.CreateOrPatchRoleBinding(c.kubeClient, meta, func(in *rbac.RoleBinding) *rbac.RoleBinding {
-		core_util.EnsureOwnerReference(&in.ObjectMeta, resource)
 
-		if in.Annotations == nil {
-			in.Annotations = map[string]string{}
-		}
+	if c.IsWorkloadExists(resource) {
+		_, _, err := rbac_util.CreateOrPatchRoleBinding(c.kubeClient, meta, func(in *rbac.RoleBinding) *rbac.RoleBinding {
+			core_util.EnsureOwnerReference(&in.ObjectMeta, resource)
 
-		in.RoleRef = rbac.RoleRef{
-			APIGroup: rbac.GroupName,
-			Kind:     "ClusterRole",
-			Name:     SidecarClusterRole,
-		}
-		in.Subjects = []rbac.Subject{
-			{
-				Kind:      rbac.ServiceAccountKind,
-				Name:      sa,
-				Namespace: resource.Namespace,
-			},
-		}
-		return in
-	})
-	return err
+			if in.Annotations == nil {
+				in.Annotations = map[string]string{}
+			}
+
+			in.RoleRef = rbac.RoleRef{
+				APIGroup: rbac.GroupName,
+				Kind:     "ClusterRole",
+				Name:     SidecarClusterRole,
+			}
+			in.Subjects = []rbac.Subject{
+				{
+					Kind:      rbac.ServiceAccountKind,
+					Name:      sa,
+					Namespace: resource.Namespace,
+				},
+			}
+			return in
+		})
+		return err
+	}
+	return nil
 }
 
 func (c *StashController) ensureSidecarClusterRole() error {

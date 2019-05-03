@@ -8,7 +8,7 @@ import (
 	. "github.com/onsi/ginkgo"
 	. "github.com/onsi/gomega"
 	core "k8s.io/api/core/v1"
-	v1 "kmodules.xyz/client-go/core/v1"
+	"kmodules.xyz/client-go/core/v1"
 )
 
 var (

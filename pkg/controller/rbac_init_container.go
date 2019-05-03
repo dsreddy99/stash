@@ -74,28 +74,31 @@ func (c *StashController) ensureRestoreInitContainerRoleBinding(resource *core.O
 		Namespace: resource.Namespace,
 		Name:      c.getRestoreInitContainerRoleBindingName(resource.Name),
 	}
-	_, _, err := rbac_util.CreateOrPatchRoleBinding(c.kubeClient, meta, func(in *rbac.RoleBinding) *rbac.RoleBinding {
-		core_util.EnsureOwnerReference(&in.ObjectMeta, resource)
+	if c.IsWorkloadExists(resource) {
+		_, _, err := rbac_util.CreateOrPatchRoleBinding(c.kubeClient, meta, func(in *rbac.RoleBinding) *rbac.RoleBinding {
+			core_util.EnsureOwnerReference(&in.ObjectMeta, resource)
 
-		if in.Annotations == nil {
-			in.Annotations = map[string]string{}
-		}
+			if in.Annotations == nil {
+				in.Annotations = map[string]string{}
+			}
 
-		in.RoleRef = rbac.RoleRef{
-			APIGroup: rbac.GroupName,
-			Kind:     "ClusterRole",
-			Name:     RestoreInitContainerClusterRole,
-		}
-		in.Subjects = []rbac.Subject{
-			{
-				Kind:      rbac.ServiceAccountKind,
-				Name:      sa,
-				Namespace: resource.Namespace,
-			},
-		}
-		return in
-	})
-	return err
+			in.RoleRef = rbac.RoleRef{
+				APIGroup: rbac.GroupName,
+				Kind:     "ClusterRole",
+				Name:     RestoreInitContainerClusterRole,
+			}
+			in.Subjects = []rbac.Subject{
+				{
+					Kind:      rbac.ServiceAccountKind,
+					Name:      sa,
+					Namespace: resource.Namespace,
+				},
+			}
+			return in
+		})
+		return err
+	}
+	return nil
 }
 
 func (c *StashController) ensureRestoreInitContainerRoleBindingDeleted(w *wapi.Workload) error {
