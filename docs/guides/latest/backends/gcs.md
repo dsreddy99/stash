@@ -14,17 +14,19 @@ section_menu_id: guides
 
 # Google Cloud Storage (GCS)
 
-Stash supports Google Cloud Storage(GCS) as backend. This tutorial will show you how to configure **Restic** and storage **Secret** for GCS backend.
+Stash supports [Google Cloud Storage(GCS)](https://cloud.google.com/storage/) as backend. This tutorial will show you how to use this backend.
+
+In order to use Google Cloud Storage as backend, you have to create a `Secret` and a `Repository` object pointing to the desired GCS bucket.
 
 #### Create Storage Secret
 
 To configure storage secret for this backend, following secret keys are needed:
 
-| Key                               | Description                                                |
-|-----------------------------------|------------------------------------------------------------|
-| `RESTIC_PASSWORD`                 | `Required`. Password used to encrypt snapshots by `restic` |
-| `GOOGLE_PROJECT_ID`               | `Required`. Google Cloud project ID                        |
-| `GOOGLE_SERVICE_ACCOUNT_JSON_KEY` | `Required`. Google Cloud service account json key          |
+|                Key                |    Type    |                         Description                         |
+| --------------------------------- | ---------- | ----------------------------------------------------------- |
+| `RESTIC_PASSWORD`                 | `Required` | Password that will be used to encrypt the backup snapshots. |
+| `GOOGLE_PROJECT_ID`               | `Required` | Google Cloud project ID.                                    |
+| `GOOGLE_SERVICE_ACCOUNT_JSON_KEY` | `Required` | Google Cloud service account json key.                      |
 
 Create storage secret as below,
 
@@ -32,84 +34,52 @@ Create storage secret as below,
 $ echo -n 'changeit' > RESTIC_PASSWORD
 $ echo -n '<your-project-id>' > GOOGLE_PROJECT_ID
 $ mv downloaded-sa-json.key > GOOGLE_SERVICE_ACCOUNT_JSON_KEY
-$ kubectl create secret generic gcs-secret \
+$ kubectl create secret generic -n demo gcs-secret \
     --from-file=./RESTIC_PASSWORD \
     --from-file=./GOOGLE_PROJECT_ID \
     --from-file=./GOOGLE_SERVICE_ACCOUNT_JSON_KEY
-secret "gcs-secret" created
+secret/gcs-secret created
 ```
 
-Verify that the secret has been created with respective keys,
+### Create Repository
 
-```yaml
-$ kubectl get secret gcs-secret -o yaml
-
-apiVersion: v1
-data:
-  GOOGLE_PROJECT_ID: PHlvdXItcHJvamVjdC1pZD4=
-  GOOGLE_SERVICE_ACCOUNT_JSON_KEY: ewogICJ0eXBlIjogInNlcnZpY2VfYWNjb3V...9tIgp9Cg==
-  RESTIC_PASSWORD: Y2hhbmdlaXQ=
-kind: Secret
-metadata:
-  creationTimestamp: 2017-06-28T13:06:51Z
-  name: gcs-secret
-  namespace: default
-  resourceVersion: "5461"
-  selfLink: /api/v1/namespaces/default/secrets/gcs-secret
-  uid: a6983b00-5c02-11e7-bb52-08002711f4aa
-type: Opaque
-```
-
-#### Configure Restic
-
-Now, you have to configure Restic crd to use GCS bucket. You have to provide previously created storage secret in `spec.backend.storageSecretName` field.
+Now, you have to create a `Repository` crd. You have to provide the storage secret that we have created earlier in `spec.backend.storageSecretName` field.
 
 Following parameters are available for `gcs` backend.
 
-| Parameter      | Description                                                                     |
-|----------------|---------------------------------------------------------------------------------|
-| `gcs.bucket`   | `Required`. Name of Bucket. If the bucket does not exist yet, it will be created in the default location (US). It is not possible at the moment to have restic create a new bucket in a different location, so you need to create it using a different program.        |
-| `gcs.prefix`   | `Optional`. Path prefix into bucket where repository will be created.           |
+|      Parameter       |    Type    |                                                                                                                    Description                                                                                                                    |
+| -------------------- | ---------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `gcs.bucket`         | `Required` | Name of Bucket. If the bucket does not exist yet, it will be created in the default location (US). It is not possible at the moment for Stash to create a new bucket in a different location, so you need to create it using a different program. |
+| `gcs.prefix`         | `Optional` | Path prefix inside the bucket where backed up data will be stored.                                                                                                                                                                                |
+| `gcs.maxConnections` | `Optional` | Maximum number of parallel connections to use for uploading backup data. By default, Stash will use maximum 5 parallel connections.                                                                                                               |
 
-Below, the YAML for Restic crd configured to use GCS bucket.
+Below, the YAML of a sample `Repository` crd that uses a GCS bucket as backend.
 
 ```yaml
 apiVersion: stash.appscode.com/v1alpha1
-kind: Restic
+kind: Repository
 metadata:
-  name: gcs-restic
-  namespace: default
+  name: gcs-repo
+  namespace: demo
 spec:
-  selector:
-    matchLabels:
-      app: gcs-restic
-  fileGroups:
-  - path: /source/data
-    retentionPolicyName: 'keep-last-5'
   backend:
     gcs:
-      bucket: stash-qa
-      prefix: demo
+      bucket: stash-backup
+      prefix: /demo/deployment/my-deploy
     storageSecretName: gcs-secret
-  schedule: '@every 1m'
-  volumeMounts:
-  - mountPath: /source/data
-    name: source-data
-  retentionPolicies:
-  - name: 'keep-last-5'
-    keepLast: 5
-    prune: true
 ```
 
-Now, create the Restic we have configured above for `gcs` backend,
+Create the `Repository` we have shown above using the following command,
 
 ```console
-$ kubectl apply -f ./docs/examples/backends/gcs/gcs-restic.yaml
-restic "gcs-restic" created
+$ kubectl apply -f https://raw.githubusercontent.com/appscode/stash/0.8.3/docs/examples/guides/v1beta1/backends/gcs.yaml
+repository/gcs-repo created
 ```
+
+Now, we are ready to use this backend to backup our desired data using Stash.
 
 ## Next Steps
 
-- Learn how to use Stash in Google Kubernetes Engine (GKE) from [here](/docs/guides/old/platforms/gke.md).
-- Learn how to use Stash to backup a Kubernetes deployment from [here](/docs/guides/old/backup.md).
-- Learn how to recover from backed up snapshot from [here](/docs/guides/old/restore.md).
+- Learn how to use Stash to backup workloads data from [here](/docs/guides/latest/workloads/backup.md).
+- Learn how to use Stash to backup databases from [here](/docs/guides/latest/databases/backup.md).
+- Learn how to use Stash to backup stand-alone PVC from [here](/docs/guides/latest/volumes/backup.md).

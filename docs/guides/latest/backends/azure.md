@@ -38,7 +38,7 @@ $ kubectl create secret generic -n demo azure-secret \
     --from-file=./RESTIC_PASSWORD \
     --from-file=./AZURE_ACCOUNT_NAME \
     --from-file=./AZURE_ACCOUNT_KEY
-secret "azure-secret" created
+secret/azure-secret created
 ```
 
 ### Create Repository
