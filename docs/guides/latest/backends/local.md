@@ -22,9 +22,9 @@ In order to use Kubernetes volumes as backend, you have to create a `Secret` and
 
 To configure storage secret for local backend, following secret keys are needed:
 
-| Key               | Description                                                |
-|-------------------|------------------------------------------------------------|
-| `RESTIC_PASSWORD` | `Required`. Password used to encrypt snapshots by `restic` |
+|        Key        |    Type    |                        Description                         |
+| ----------------- | ---------- | ---------------------------------------------------------- |
+| `RESTIC_PASSWORD` | `Required` | Password that will be used to encrypt the backup snapshots |
 
 Create storage secret as below,
 
@@ -40,11 +40,11 @@ Now, you have to create a `Repository` crd that uses Kubernetes volume as backen
 
 Following parameters are available for `Local` backend.
 
-|      Parameter       |                                            Description                                             |
-| -------------------- | -------------------------------------------------------------------------------------------------- |
-| `local.mountPath`    | `Required`. Path where this volume will be mounted in the sidecar container. Example: `/safe/data` |
-| `local.subPath`      | `Optional`. Sub-path inside the referenced volume instead of its root.                             |
-| `local.VolumeSource` | `Required`. Any Kubernetes volume. Can be specified inlined. Example: `hostPath`                   |
+|      Parameter       |    Type    |                                              Description                                               |
+| -------------------- | ---------- | ------------------------------------------------------------------------------------------------------ |
+| `local.mountPath`    | `Required` | Path where this volume will be mounted inside the sidecar container. Example: `/safe/data`.            |
+| `local.subPath`      | `Optional` | Sub-path inside the referenced volume where the backed up snapshot will be stored instead of its root. |
+| `local.VolumeSource` | `Required` | Any Kubernetes volume. Can be specified inlined. Example: `hostPath`.                                  |
 
 Here, we are going to show some sample `Repository` crds that uses different Kubernetes volume as backend.
 
