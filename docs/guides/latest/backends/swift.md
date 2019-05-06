@@ -20,7 +20,7 @@ In order to use OpenStack Swift as backend, you have to create a `Secret` and a 
 
 #### Create Storage Secret
 
-Stash supports Swift's Keystone v1, v2, v3 authentication as well as token based authentication.
+Stash supports Swift's Keystone v1, v2, v3 authentication as well as token-based authentication.
 
 **Keystone v1 authentication:**
 
@@ -84,9 +84,9 @@ For keystone v3 application credential authentication (application credential na
 | `OS_APPLICATION_CREDENTIAL_SECRET` | The secret for authenticating the application credential.
 |
 
-**Token based authentication:**
+**Token-based authentication:**
 
-For token based authentication, following secret keys are needed:
+For token-based authentication, following secret keys are needed:
 
 | Key                      | Description                                                |
 |--------------------------|------------------------------------------------------------|
@@ -121,12 +121,12 @@ Now, you have to create a `Repository` crd. You have to provide the storage secr
 
 Following parameters are available for `Swift` backend.
 
-| Parameter         | Description                                                                 |
-|-------------------|-----------------------------------------------------------------------------|
-| `swift.container` | `Required`. Name of Storage container                                       |
-| `swift.prefix`    | `Optional`. Path prefix into bucket where repository will be created.       |
+|     Parameter     |                                  Description                                   |
+| ----------------- | ------------------------------------------------------------------------------ |
+| `swift.container` | `Required`. Name of Storage container                                          |
+| `swift.prefix`    | `Optional`. Path prefix inside the container where backed up data will be stored. |
 
-Below, the YAML of a sample `Repository` crd that uses a GCS bucket as backend.
+Below, the YAML of a sample `Repository` crd that uses a Swift container as backend.
 
 ```yaml
 apiVersion: stash.appscode.com/v1alpha1
@@ -145,8 +145,8 @@ spec:
 Create the `Repository` we have shown above using the following command,
 
 ```console
-$ kubectl apply -f https://raw.githubusercontent.com/appscode/stash/0.8.3/docs/examples/guides/v1beta1/backends/gcs.yaml
-repository/gcs-repo created
+$ kubectl apply -f https://raw.githubusercontent.com/appscode/stash/0.8.3/docs/examples/guides/v1beta1/backends/swift.yaml
+repository/swift-repo created
 ```
 
 Now, we are ready to use this backend to backup our desired data using Stash.
